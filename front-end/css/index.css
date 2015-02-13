@@ -1,37 +1,3 @@
-/*
-Error: Invalid CSS after "\": expected "{", was ""
-        on line 1 of sass/index.scss
 
-1: \
 
-Backtrace:
-sass/index.scss:1
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/scss/parser.rb:1163:in `expected'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/scss/parser.rb:1099:in `expected'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/scss/parser.rb:1094:in `tok!'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/scss/parser.rb:641:in `block'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/scss/parser.rb:635:in `ruleset'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/scss/parser.rb:660:in `block_child'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/scss/parser.rb:650:in `block_contents'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/scss/parser.rb:117:in `stylesheet'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/scss/parser.rb:42:in `parse'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/engine.rb:393:in `_to_tree'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/engine.rb:368:in `_render_with_sourcemap'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/engine.rb:285:in `render_with_sourcemap'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/plugin/compiler.rb:489:in `update_stylesheet'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/plugin/compiler.rb:215:in `block in update_stylesheets'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/plugin/compiler.rb:209:in `each'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/plugin/compiler.rb:209:in `update_stylesheets'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/plugin/compiler.rb:469:in `on_file_changed'
-/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/plugin/compiler.rb:328:in `block in watch'
-/Library/Ruby/Gems/2.0.0/gems/listen-2.7.9/lib/listen/listener.rb:276:in `call'
-/Library/Ruby/Gems/2.0.0/gems/listen-2.7.9/lib/listen/listener.rb:276:in `_process_changes'
-/Library/Ruby/Gems/2.0.0/gems/listen-2.7.9/lib/listen/listener.rb:233:in `block in _wait_for_changes'
-/Library/Ruby/Gems/2.0.0/gems/listen-2.7.9/lib/listen/listener.rb:216:in `loop'
-/Library/Ruby/Gems/2.0.0/gems/listen-2.7.9/lib/listen/listener.rb:216:in `_wait_for_changes'
-/Library/Ruby/Gems/2.0.0/gems/listen-2.7.9/lib/listen/listener.rb:312:in `block in _start_wait_thread'
-*/
-body:before {
-  white-space: pre;
-  font-family: monospace;
-  content: "Error: Invalid CSS after \"\\": expected \"{\", was \"\"\A         on line 1 of sass/index.scss\A \A 1: \"; }
+/*# sourceMappingURL=index.css.map */
