@@ -9,22 +9,23 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
     enableSorting: true,
     columnDefs: [
       {
-        field: 'name',
-        minWidth: 200,
-        width: '50%'
+        field: 'title',
+        width: '40%'
       }, {
-        field: 'gender',
-        width: '30%',
-        maxWidth: 200,
-        minWidth: 70
-      }, {
-        field: 'company',
+        field: 'author',
         width: '20%'
+      }, {
+        field: 'year',
+        width: '10%',
+        maxWidth: 100
+      }, {
+        field: 'conference',
+        width: '30%'
       }
     ],
     rowTemplate: '<div ng-class="{active: grid.appScope.activeRow == row}" ng-click="grid.appScope.setActiveRow(row)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>'
   };
-  return $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/100.json').success(function(data) {
+  return $http.get('data/publication.json').success(function(data) {
     return $scope.gridOptions.data = data;
   });
 });

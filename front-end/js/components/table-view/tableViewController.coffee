@@ -11,14 +11,16 @@ angular.module "sightApp"
 	$scope.gridOptions = {
 		enableSorting: true,
 		columnDefs: [
-			{ field: 'name', minWidth: 200, width: '50%'},
-			{ field: 'gender', width: '30%', maxWidth: 200, minWidth: 70 },
-			{ field: 'company', width: '20%' }
+			{ field: 'title', width: '40%'},
+			{ field: 'author', width: '20%'},
+			{ field: 'year', width: '10%',maxWidth:100 },
+			{ field: 'conference', width: '30%' }
 		]
+
 		rowTemplate: '<div ng-class="{active: grid.appScope.activeRow == row}" ng-click="grid.appScope.setActiveRow(row)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>'
 	};
 
-	$http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/100.json')
+	$http.get('data/publication.json')
 	.success((data)->
 		$scope.gridOptions.data = data;
 	);

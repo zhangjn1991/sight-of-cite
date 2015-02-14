@@ -68,9 +68,44 @@ body{
 .grid{
 	width:100%;
 	height:auto;
+}
 
-	.active{
-		background-color:red !important;
+.ui-grid{
+	font-weight:300;
+	border:0;
+	
+	.ui-grid-top-panel{	
+		background:$color-secondary;
+		color:$color-text-revert;
+		font-weight:inherit;
+	}
+
+	.ui-grid-row{
+		color:$color-text-primary;
+
+
+		&:nth-child(odd) .ui-grid-cell{
+			background:$color-background-table;
+		}
+
+		&:nth-child(even) .ui-grid-cell{
+			background:$color-background-table-secondary;
+		}
+
+		.ui-grid-cell.active{
+			background-color:$color-highlight;	
+			color:$color-text-revert;
+		}
+
+		.ui-grid-cell{
+			border-color:$color-border-table;
+		}
+
+		
+	}
+
+	.ui-grid-header-cell{
+		border-color:$color-border-table;	
 	}
 }
 

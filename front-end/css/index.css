@@ -38,8 +38,27 @@ body {
 .grid {
   width: 100%;
   height: auto; }
-  .grid .active {
-    background-color: red !important; }
+
+.ui-grid {
+  font-weight: 300;
+  border: 0; }
+  .ui-grid .ui-grid-top-panel {
+    background: #5d7b92;
+    color: #f9fafb;
+    font-weight: inherit; }
+  .ui-grid .ui-grid-row {
+    color: #334e5f; }
+    .ui-grid .ui-grid-row:nth-child(odd) .ui-grid-cell {
+      background: #f9fafb; }
+    .ui-grid .ui-grid-row:nth-child(even) .ui-grid-cell {
+      background: rgba(157, 177, 191, 0.1); }
+    .ui-grid .ui-grid-row .ui-grid-cell.active {
+      background-color: #6ba7d5;
+      color: #f9fafb; }
+    .ui-grid .ui-grid-row .ui-grid-cell {
+      border-color: rgba(192, 204, 213, 0.5); }
+  .ui-grid .ui-grid-header-cell {
+    border-color: rgba(192, 204, 213, 0.5); }
 
 /* .gridStyle {
     border: 1px solid rgb(212,212,212);
