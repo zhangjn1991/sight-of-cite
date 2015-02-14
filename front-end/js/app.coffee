@@ -1,4 +1,4 @@
-angular.module 'sightApp',['ngRoute']
+angular.module('sightApp',['ngTouch', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.moveColumns', 'ngRoute'])
 .config(['$routeProvider',($routeProvider) -> 
 	$routeProvider
 		.when '/', 

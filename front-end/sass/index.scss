@@ -65,6 +65,22 @@ body{
 	height:100%;
 }
 
+.grid{
+	width:100%;
+	height:auto;
+
+	.active{
+		background-color:red !important;
+	}
+}
+
+/* .gridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 400px; 
+    height: 300px
+}
+
+
 table{
 	width:100%;
 
@@ -74,13 +90,26 @@ table{
 	color:$color-text-primary;
 	font-weight:300;
 	td{
+		border-right:1px solid $color-border-table;
+		
+		padding:0.5em 0;
+
+		text-indent:0.5em;
+
 		text-overflow:ellipsis;
 		white-space:nowrap;
-		overflow:hidden;
+		overflow:hidden;		
 		
-		padding:0.5em !important;
+	}
 
+	th{
+		font-weight:300;
+		font-size:0.8em;
+		text-align:left;					
 		border-right:1px solid $color-border-table;
+		
+		padding:0.3em;		
+		text-indent:0.525em;
 	}
 
 	tr:nth-of-type(even){
@@ -94,13 +123,14 @@ table{
 	tr:first-of-type{
 		background:$color-secondary;
 		color:$color-text-revert;
-
-		th{
-			font-weight:300;
-			font-size:0.8em;
-			text-align:left;
-			padding:0.2em;			
-			border-right:1px solid $color-border-table;
-		}
 	}
-}
+
+	
+
+	tr.active{
+		background:$color-highlight;
+		color:$color-text-revert;
+	}
+
+
+} */

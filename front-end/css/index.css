@@ -35,29 +35,71 @@ body {
   width: 20%;
   height: 100%; }
 
-table {
+.grid {
   width: 100%;
-  border-spacing: 0px;
-  color: #334e5f;
-  font-weight: 300; }
-  table td {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    padding: 0.5em !important;
-    border-right: 1px solid rgba(192, 204, 213, 0.5); }
-  table tr:nth-of-type(even) {
-    background: #f9fafb; }
-  table tr:nth-of-type(odd) {
-    background: rgba(157, 177, 191, 0.1); }
-  table tr:first-of-type {
-    background: #5d7b92;
-    color: #f9fafb; }
-    table tr:first-of-type th {
-      font-weight: 300;
-      font-size: 0.8em;
-      text-align: left;
-      padding: 0.2em;
-      border-right: 1px solid rgba(192, 204, 213, 0.5); }
+  height: auto; }
+  .grid .active {
+    background-color: red !important; }
+
+/* .gridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 400px; 
+    height: 300px
+}
+
+
+table{
+	width:100%;
+
+	border-spacing:0px;
+	
+
+	color:$color-text-primary;
+	font-weight:300;
+	td{
+		border-right:1px solid $color-border-table;
+		
+		padding:0.5em 0;
+
+		text-indent:0.5em;
+
+		text-overflow:ellipsis;
+		white-space:nowrap;
+		overflow:hidden;		
+		
+	}
+
+	th{
+		font-weight:300;
+		font-size:0.8em;
+		text-align:left;					
+		border-right:1px solid $color-border-table;
+		
+		padding:0.3em;		
+		text-indent:0.525em;
+	}
+
+	tr:nth-of-type(even){
+		background:$color-background-table;
+	}
+
+	tr:nth-of-type(odd){
+		background:$color-background-table-secondary;
+	}
+
+	tr:first-of-type{
+		background:$color-secondary;
+		color:$color-text-revert;
+	}
+
+	
+
+	tr.active{
+		background:$color-highlight;
+		color:$color-text-revert;
+	}
+
+
+} */
 
 /*# sourceMappingURL=index.css.map */
