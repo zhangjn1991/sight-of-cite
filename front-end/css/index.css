@@ -13,7 +13,7 @@ body {
 
 .globalContainer {
   position: absolute;
-  left: 20%;
+  left: 15%;
   top: 0;
   z-index: 0;
   width: 60%;
@@ -21,23 +21,31 @@ body {
 
 .info-bar {
   position: absolute;
-  left: 0;
+  right: 0;
   top: 0;
   z-index: 1;
-  width: 20%;
+  width: 25%;
   height: 100%; }
 
 .search-bar {
   position: absolute;
-  right: 0;
+  left: 0;
   top: 0;
   z-index: 1;
-  width: 20%;
+  width: 15%;
   height: 100%; }
+
+.table-view-container {
+  width: 100%;
+  height: 100%; }
+  .table-view-container .table-header {
+    background: #334e5f;
+    width: 100%;
+    height: 6%; }
 
 .grid {
   width: 100%;
-  height: auto; }
+  height: 94%; }
 
 .ui-grid {
   font-weight: 300;
@@ -60,65 +68,53 @@ body {
   .ui-grid .ui-grid-header-cell {
     border-color: rgba(192, 204, 213, 0.5); }
 
-/* .gridStyle {
-    border: 1px solid rgb(212,212,212);
-    width: 400px; 
-    height: 300px
-}
-
-
-table{
-	width:100%;
-
-	border-spacing:0px;
-	
-
-	color:$color-text-primary;
-	font-weight:300;
-	td{
-		border-right:1px solid $color-border-table;
-		
-		padding:0.5em 0;
-
-		text-indent:0.5em;
-
-		text-overflow:ellipsis;
-		white-space:nowrap;
-		overflow:hidden;		
-		
-	}
-
-	th{
-		font-weight:300;
-		font-size:0.8em;
-		text-align:left;					
-		border-right:1px solid $color-border-table;
-		
-		padding:0.3em;		
-		text-indent:0.525em;
-	}
-
-	tr:nth-of-type(even){
-		background:$color-background-table;
-	}
-
-	tr:nth-of-type(odd){
-		background:$color-background-table-secondary;
-	}
-
-	tr:first-of-type{
-		background:$color-secondary;
-		color:$color-text-revert;
-	}
-
-	
-
-	tr.active{
-		background:$color-highlight;
-		color:$color-text-revert;
-	}
-
-
-} */
+.info-bar .tab-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  width: 100%;
+  height: 6%;
+  background: #334e5f; }
+  .info-bar .tab-container .tab {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    color: #f9fafb;
+    font-size: 0.8em;
+    cursor: pointer; }
+    .info-bar .tab-container .tab:hover {
+      background: #6ba7d5; }
+    .info-bar .tab-container .tab span {
+      width: 100%;
+      text-align: center; }
+.info-bar .content-container {
+  position: absolute;
+  top: 6%;
+  right: 0;
+  height: 94%;
+  color: #334e5f;
+  font-weight: 300;
+  box-shadow: 5px 0px 30px 0px rgba(0, 0, 0, 0.5); }
+  .info-bar .content-container h1 {
+    font-weight: inherit;
+    font-size: 1.2em;
+    margin: 1em; }
+  .info-bar .content-container section {
+    margin: 1em; }
+  .info-bar .content-container h2 {
+    font-weight: 500;
+    font-size: 0.8em;
+    color: rgba(96, 123, 141, 0.5); }
+  .info-bar .content-container p {
+    margin: 0.5em; }
+  .info-bar .content-container .tag {
+    display: inline-block;
+    background: #5d7b92;
+    color: #f9fafb;
+    padding: 0.5em;
+    margin: 0 0.5em 0.5em 0;
+    font-size: 0.8em; }
 
 /*# sourceMappingURL=index.css.map */
