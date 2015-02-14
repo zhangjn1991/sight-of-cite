@@ -14,8 +14,8 @@ $z-main:0;
 $z-sidebar:1;
 $z-header:2;
 
-$search-bar-width:15%;
-$info-bar-width:25%;
+$search-bar-width:20%;
+$info-bar-width:20%;
 $header-bar-height:6%;
 
 @mixin border($direction, $color){
@@ -46,15 +46,6 @@ body{
 	z-index:$z-main;
 
 	width:100% - $search-bar-width - $info-bar-width;
-	height:100%;	
-}
-
-.info-bar{
-	position:absolute;
-	right:0;
-	top:0;
-	z-index:$z-sidebar;
-	width:$info-bar-width;
 	height:100%;	
 }
 
@@ -123,6 +114,13 @@ body{
 }
 
 .info-bar{
+	position:absolute;
+	right:0;
+	top:0;
+	z-index:$z-sidebar;
+	width:$info-bar-width;
+	height:100%;		
+
 	.tab-container{
 		position:absolute;
 		top:0;
@@ -162,7 +160,8 @@ body{
 		top:$header-bar-height;
 		right:0;
 
-		height:100% - $header-bar-height;		
+		height:100% - $header-bar-height;	
+		overflow:scroll;	
 
 		color:$color-text-primary;
 		font-weight:300;

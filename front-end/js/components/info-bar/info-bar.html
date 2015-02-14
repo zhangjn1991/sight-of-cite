@@ -3,31 +3,31 @@
 		<div class="tab"><span>Detail</span></div>
 		<div class="tab"><span>Notes</span></div>
 		<div class="tab"><span>Reference</span></div>
-		<div class="tab"><span>Cited-by</span></div>
+		<div class="tab"><span>Cited by</span></div>
 	</div>
 	<div class="content-container">
-		<h1>Title Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut, veritatis!</h1>
+		<h1>{{infoBarCtrl.entity.title}}</h1>
 		<section>
 			<h2>Authors</h2>
-			<p>Lorem ipsum, Oolor sit amet, Consectetur adipisicing elit. Odit, aliquid.</p>
+			<p>{{infoBarCtrl.entity.author}}</p>
 		</section>
 		<section>
 			<h2>Year</h2>
-			<p>2007</p>
+			<p>{{infoBarCtrl.entity.year}}</p>
 		</section>
 		<section>
 			<h2>Conference</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+			<p>{{infoBarCtrl.entity.conference}}</p>
 		</section>
 		<section>
 			<h2>Tags</h2>
-			<p><span class="tag">Visualization</span>
-			<span class="tag">Graphics</span>
-			<span class="tag">Social Networks</span></p>
+			<p>
+				<span class="tag" ng-repeat="tag in infoBarCtrl.entity.tag">{{tag}}</span>
+			</p>
 		</section>
 		<section>
 			<h2>Abstract</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente neque, ratione praesentium. Dolorum delectus nam facilis a, obcaecati nemo omnis deserunt dolore minima, voluptatum labore quae inventore, quo libero tempore dignissimos animi eos reprehenderit! Quisquam aspernatur amet, quo odio dolores, pariatur culpa deserunt beatae qui iusto suscipit animi incidunt et.</p>
+			<p>{{infoBarCtrl.entity.abstract}}</p>
 		</section>
 	</div>
 </div>

@@ -19,8 +19,3 @@ angular.module "sightApp"
 
 
 	$http.get('data/publication.json').success (data)-> $scope.gridOptions.data = data;
-		
-	
-
-
-
