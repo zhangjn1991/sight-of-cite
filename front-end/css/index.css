@@ -11,88 +11,82 @@ body {
   font-family: "Helvetica Neue",sans-serif;
   background: #f9fafb; }
 
-.globalContainer {
+.view-container {
   position: absolute;
   left: 20%;
-  top: 0;
+  top: 6%;
   z-index: 0;
   width: 60%;
-  height: 100%; }
-
-.search-bar {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 1;
-  width: 20%;
-  height: 100%; }
-
-.table-view-container {
-  width: 100%;
-  height: 100%; }
-  .table-view-container .table-header {
-    background: #334e5f;
-    width: 100%;
-    height: 6%; }
-
-.grid {
-  width: 100%;
   height: 94%; }
 
-.ui-grid {
-  font-weight: 300;
-  border: 0; }
-  .ui-grid .ui-grid-top-panel {
-    background: #5d7b92;
-    color: #f9fafb;
-    font-weight: inherit; }
-  .ui-grid .ui-grid-row {
-    color: #334e5f; }
-    .ui-grid .ui-grid-row:nth-child(odd) .ui-grid-cell {
-      background: #f9fafb; }
-    .ui-grid .ui-grid-row:nth-child(even) .ui-grid-cell {
-      background: rgba(157, 177, 191, 0.1); }
-    .ui-grid .ui-grid-row .ui-grid-cell.active {
-      background-color: #6ba7d5;
-      color: #f9fafb; }
-    .ui-grid .ui-grid-row .ui-grid-cell {
-      border-color: rgba(192, 204, 213, 0.5); }
-  .ui-grid .ui-grid-header-cell {
-    border-color: rgba(192, 204, 213, 0.5); }
-
-.info-bar {
+header {
   position: absolute;
-  right: 0;
   top: 0;
-  z-index: 1;
-  width: 20%;
-  height: 100%; }
-  .info-bar .tab-container {
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 6%;
+  background: #334e5f; }
+  header .tab-container {
     position: absolute;
     top: 0;
     right: 0;
     z-index: 2;
     display: flex;
-    width: 100%;
-    height: 6%;
-    background: #334e5f; }
-    .info-bar .tab-container .tab {
+    width: 20%;
+    height: 100%;
+    background: #334e5f;
+    list-style: none; }
+    header .tab-container .tab {
       display: flex;
       align-items: center;
       flex: 1;
       color: #f9fafb;
       font-size: 0.8em;
       cursor: pointer; }
-      .info-bar .tab-container .tab:hover {
+      header .tab-container .tab:hover {
         background: #6ba7d5; }
-      .info-bar .tab-container .tab span {
+      header .tab-container .tab span {
         width: 100%;
         text-align: center; }
+
+.table-view-container {
+  width: 100%;
+  height: 100%; }
+  .table-view-container .grid {
+    width: 100%;
+    height: 100%; }
+  .table-view-container .ui-grid {
+    font-weight: 300;
+    border: 0; }
+    .table-view-container .ui-grid .ui-grid-top-panel {
+      background: #5d7b92;
+      color: #f9fafb;
+      font-weight: inherit; }
+    .table-view-container .ui-grid .ui-grid-row {
+      color: #334e5f; }
+      .table-view-container .ui-grid .ui-grid-row:nth-child(odd) .ui-grid-cell {
+        background: #f9fafb; }
+      .table-view-container .ui-grid .ui-grid-row:nth-child(even) .ui-grid-cell {
+        background: rgba(157, 177, 191, 0.1); }
+      .table-view-container .ui-grid .ui-grid-row .ui-grid-cell.active {
+        background-color: #6ba7d5;
+        color: #f9fafb; }
+      .table-view-container .ui-grid .ui-grid-row .ui-grid-cell {
+        border-color: rgba(192, 204, 213, 0.5); }
+    .table-view-container .ui-grid .ui-grid-header-cell {
+      border-color: rgba(192, 204, 213, 0.5); }
+
+.info-bar {
+  position: absolute;
+  right: 0;
+  top: 6%;
+  z-index: 1;
+  width: 20%;
+  height: 94%; }
   .info-bar .content-container {
-    position: absolute;
-    top: 6%;
-    right: 0;
-    height: 94%;
+    height: 100%;
+    width: 100%;
     overflow: scroll;
     color: #334e5f;
     font-weight: 300;
@@ -116,5 +110,13 @@ body {
       padding: 0.5em;
       margin: 0 0.5em 0.5em 0;
       font-size: 0.8em; }
+
+.search-bar {
+  position: absolute;
+  top: 6%;
+  left: 0;
+  width: 20%;
+  height: 94%;
+  background: lightgray; }
 
 /*# sourceMappingURL=index.css.map */

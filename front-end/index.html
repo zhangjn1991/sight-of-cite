@@ -14,10 +14,14 @@
 	<link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-
-	<div class="globalContainer" ng-view></div>
-	<div info-bar></div>
+	
+	<div class="view-container" ng-view></div>
+	<!-- <div info-bar></div> -->
+	<info-bar></info-bar>
 	<search-bar></search-bar>
+	
+	<header-bar></header-bar>
+
 
 
 	<script src="js/lib/d3.v3.min.js"></script>
@@ -27,7 +31,8 @@
 	<script src="js/app.js"></script>
 	<script src="js/components/search-bar/searchBarDirective.js"></script>
 	<script src="js/components/info-bar/infoBarDirective.js"></script> 
-	<script src="js/components/info-bar/infoBarController.js"></script> 
+	<script src="js/components/info-bar/infoBarController.js"></script>
+	<script src="js/components/header-bar/headerBarDirective.js"></script>  
 	<script src="js/components/table-view/tableViewController.js"></script> 
 	<script type="text/javascript">
 	</script>
