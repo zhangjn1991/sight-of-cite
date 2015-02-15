@@ -3,5 +3,7 @@ angular.module 'sightApp'
 	{
 		restrict:'E',
 		scope:true,
-		templateUrl:'js/components/search-bar/search-bar.html'
+		templateUrl:'js/components/search-bar/search-bar.html',
+		controller:'SearchBarController'
+		controllerAs:'searchBarCtrl'
 	}

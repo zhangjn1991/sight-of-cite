@@ -1,5 +1,5 @@
 <div class="search-bar">	
-	<div class="collection-container container">
+	<div class="collection-container">
 		<section>
 			<h2>My Library</h2>
 			<span class="count">293</span>
@@ -8,71 +8,40 @@
 			<h2>Collection</h2>
 			<span class="count">1</span>
 		</section>
-		<section class="collection">
-			<h3>Thesis</h3>
-			<span class="count">19</span>
+		<section class="collection" ng-repeat="collection in searchBarCtrl.allCollections">
+			<h3>{{collection.name}}</h3>
+			<span class="count">{{collection.count}}</span>
 		</section>
-		<section class="collection">
-			<h3>Projects</h3>
-			<span class="count">30</span>
-		</section>
-		<section class="collection">
-			<h3>Research</h3>
-			<span class="count">7</span>
-		</section>
+		
 	</div>
-	<div class="search-container container">
-		<section>
+	<div class="button-container">		
 			<h2>Search</h2>
 			<div class="search-button">
 				<div></div>
 			</div>
-		</section>
-		<div class="condition-container">
-			<section class="condition">
-				<form action="">
-					<select name="" id="parameter">
-						<option value="">Title</option>
-						<option value="">Author</option>
-						<option value="">Year</option>
-						<option value="">Conference</option>
-					</select>
-					<select name="" id="measure">
-						<option value="">More</option>
-						<option value="">Less</option>
-						<option value="">Has</option>
-					</select>
-					<input type="text" value="Lorem ipsum.">
-				</form>
-				<div class="delete-button">
-					<div></div>
-				</div>
-			</section>
-			<section class="condition">
-				<form action="">
-					<select name="" id="para-name">
-						<option value="">Title</option>
-						<option value="">Author</option>
-						<option value="">Year</option>
-						<option value="">Conference</option>
-					</select>
-					<select name="" id="measure">
-						<option value="">More</option>
-						<option value="">Less</option>
-						<option value="">Has</option>
-					</select>
-					<input type="text" id="para-value" value="Lorem ipsum.">
-				</form>
-				<div class="delete-button">
-					<div></div>
-				</div>
-			</section>
-			<section class="condition add-container">
-				<div class="add-button">
-					<div></div>
-				</div>
-				<span>New Condition</span>
-			</section>
-		</div>
 	</div>
+	
+	<div class="condition-container">
+		<section class="condition" ng-repeat="condition in searchBarCtrl.allConditions">
+			<form action="" id="condition-form">
+				<select form="condidition-form" ng-model="condition.name_id">
+					<option ng-selected="$index == condition.name_id" value="{{$index}}" ng-repeat="name in searchBarCtrl.allNames">{{name}}</option>	
+				</select>
+				<select name="" id="measure" ng-model="condition.measure_id">
+					<option ng-selected="$index == condition.measure_id" value="{{$index}}" ng-repeat="measure in searchBarCtrl.allMeasures">{{measure}}</option>	
+				</select>
+				<input type="text" ng-model="condition.value">
+			</form>
+			<div class="delete-button">
+				<div></div>
+			</div>
+		</section>			
+		<section class="condition add-container">
+			<div class="add-button">
+				<div></div>
+			</div>
+			<span>New Condition</span>
+		</section>
+	</div>
+	
 </div>

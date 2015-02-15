@@ -117,6 +117,8 @@ header {
         background: #6ba7d5; }
 
 .search-bar {
+  display: flex;
+  flex-direction: column;
   position: absolute;
   top: 6%;
   left: 0;
@@ -128,10 +130,10 @@ header {
   .search-bar h2 {
     font-weight: 300;
     font-size: 1.2em; }
-  .search-bar .container {
-    padding: 0.5em 0; }
 
 .collection-container {
+  flex: none;
+  padding: 0.5em 0;
   border-bottom: 1px solid rgba(192, 204, 213, 0.5); }
   .collection-container section {
     display: flex;
@@ -155,78 +157,87 @@ header {
     font-weight: 300;
     font-size: 0.8em; }
 
-.search-container section {
-  padding: 1em; }
-.search-container .search-button {
-  width: 70%;
-  height: 15px;
-  margin: 1em auto;
-  padding: 8px 0;
-  background: #5d7b92;
-  -webkit-transition: background 0.3s;
-  cursor: pointer; }
-  .search-container .search-button:hover {
-    background: #6ba7d5; }
-  .search-container .search-button div {
-    width: 100%;
-    height: 100%;
-    background: url("../resources/search-icon.png") no-repeat center;
-    background-size: contain; }
-.search-container .condition {
-  position: relative;
-  border-top: 1px solid rgba(192, 204, 213, 0.3); }
-  .search-container .condition:hover .delete-button {
-    opacity: 1;
-    pointer-events: auto; }
-  .search-container .condition select, .search-container .condition input {
-    color: #334e5f;
+.button-container {
+  flex: none;
+  padding: 0.5em 0;
+  border-bottom: 1px solid rgba(192, 204, 213, 0.5); }
+  .button-container h2 {
+    margin-left: 1em; }
+  .button-container .search-button {
+    width: 70%;
+    height: 15px;
+    margin: 1em auto 0.5em auto;
+    padding: 8px 0;
+    background: #5d7b92;
     -webkit-transition: background 0.3s;
-    cursor: pointer;
-    cursor: auto; }
-    .search-container .condition select:hover, .search-container .condition input:hover {
-      background: rgba(96, 123, 141, 0.1); }
-    .search-container .condition select:focus, .search-container .condition input:focus {
-      outline: 0;
-      background: rgba(96, 123, 141, 0.3); }
-  .search-container .condition input {
-    padding: 0.5em;
-    width: 100%;
-    background: transparent;
-    border-bottom: 1px solid rgba(192, 204, 213, 0.3); }
-  .search-container .condition .delete-button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 7px;
-    opacity: 0;
-    pointer-events: none;
-    cursor: pointer;
-    -webkit-transition: background 0.3s, opacity 0.3s; }
-    .search-container .condition .delete-button:hover {
-      background: rgba(96, 123, 141, 0.1); }
-    .search-container .condition .delete-button > div {
-      width: 10px;
-      height: 10px;
-      background: url("../resources/delete-icon.png");
+    cursor: pointer; }
+    .button-container .search-button:hover {
+      background: #6ba7d5; }
+    .button-container .search-button div {
+      width: 100%;
+      height: 100%;
+      background: url("../resources/search-icon.png") no-repeat center;
       background-size: contain; }
-.search-container .add-container {
-  display: flex;
-  align-items: center;
-  padding: 0.5em 1em;
-  -webkit-transition: background 0.3s;
-  cursor: pointer; }
-  .search-container .add-container:hover {
-    background: rgba(96, 123, 141, 0.1); }
-  .search-container .add-container .add-button {
-    display: inline-block;
-    padding: 7px; }
-    .search-container .add-container .add-button > div {
-      width: 10px;
-      height: 10px;
-      background: url("../resources/add-icon.png");
-      background-size: contain; }
-  .search-container .add-container span {
-    font-size: 0.8em;
-    color: rgba(96, 123, 141, 0.5); }
+
+.condition-container {
+  overflow: scroll; }
+  .condition-container .condition {
+    position: relative;
+    padding: 1em;
+    border-top: 1px solid rgba(192, 204, 213, 0.3); }
+    .condition-container .condition:hover .delete-button {
+      opacity: 1;
+      pointer-events: auto; }
+    .condition-container .condition select, .condition-container .condition input {
+      color: #334e5f;
+      -webkit-transition: background 0.3s;
+      cursor: pointer;
+      cursor: auto; }
+      .condition-container .condition select:hover, .condition-container .condition input:hover {
+        background: rgba(96, 123, 141, 0.1); }
+      .condition-container .condition select:focus, .condition-container .condition input:focus {
+        outline: 0;
+        background: rgba(96, 123, 141, 0.3); }
+    .condition-container .condition input {
+      padding: 0.5em;
+      width: 100%;
+      background: transparent;
+      border-bottom: 1px solid rgba(192, 204, 213, 0.3); }
+    .condition-container .condition .delete-button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 7px;
+      opacity: 0;
+      pointer-events: none;
+      cursor: pointer;
+      -webkit-transition: background 0.3s, opacity 0.3s; }
+      .condition-container .condition .delete-button:hover {
+        background: rgba(96, 123, 141, 0.1); }
+      .condition-container .condition .delete-button > div {
+        width: 10px;
+        height: 10px;
+        background: url("../resources/delete-icon.png");
+        background-size: contain; }
+  .condition-container .add-container {
+    display: flex;
+    align-items: center;
+    padding: 0.5em 1em;
+    margin-bottom: 0.5em;
+    -webkit-transition: background 0.3s;
+    cursor: pointer; }
+    .condition-container .add-container:hover {
+      background: rgba(96, 123, 141, 0.1); }
+    .condition-container .add-container .add-button {
+      display: inline-block;
+      padding: 7px; }
+      .condition-container .add-container .add-button > div {
+        width: 10px;
+        height: 10px;
+        background: url("../resources/add-icon.png");
+        background-size: contain; }
+    .condition-container .add-container span {
+      font-size: 0.8em;
+      color: rgba(96, 123, 141, 0.5); }
 
 /*# sourceMappingURL=index.css.map */
