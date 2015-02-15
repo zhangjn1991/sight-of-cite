@@ -18,13 +18,13 @@ angular.module 'sightApp'
 			count:30
 		}
 	]
-	@allNames = ['Title','Author','Year','Conference']
-	@allMeasures = ['>','<','Has','=']
+	@allNames = ['Metric','Title','Author','Year','Conference']
+	@allMeasures = ['Relation','>','<','Has','=']
 	@allConditions = [
 		{
-			name_id:0,
-			measure_id:0,
-			value:"aoeu"
+			name_id:1,
+			measure_id:2,
+			value:""
 		},
 		{
 			name_id:2,
@@ -33,23 +33,13 @@ angular.module 'sightApp'
 		},
 		{
 			name_id:3,
-			measure_id:0,
-			value:"aoeuAE"
-		},
-		{
-			name_id:0,
-			measure_id:0,
-			value:"aoeu"
-		},
-		{
-			name_id:2,
 			measure_id:1,
-			value:"aoeuA"
-		},
-		{
-			name_id:3,
-			measure_id:0,
 			value:"aoeuAE"
 		}
 	]
+	@removeCondition = (index)->
+		@allConditions.splice index,1
+	@addCondition = ()->
+		@allConditions.push({name_id:0, measure_id:0, value:""})
+
 	0

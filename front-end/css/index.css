@@ -199,6 +199,7 @@ header {
         outline: 0;
         background: rgba(96, 123, 141, 0.3); }
     .condition-container .condition input {
+      margin-top: 0.5em;
       padding: 0.5em;
       width: 100%;
       background: transparent;

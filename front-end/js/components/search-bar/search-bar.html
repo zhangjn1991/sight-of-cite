@@ -24,19 +24,19 @@
 	<div class="condition-container">
 		<section class="condition" ng-repeat="condition in searchBarCtrl.allConditions">
 			<form action="" id="condition-form">
-				<select form="condidition-form" ng-model="condition.name_id">
-					<option ng-selected="$index == condition.name_id" value="{{$index}}" ng-repeat="name in searchBarCtrl.allNames">{{name}}</option>	
+				<select form="condidition-form" ng-model="condition.name_id">	
+					<option ng-selected="$index == condition.name_id" ng-disabled="$index == 0" value="{{$index}}" ng-repeat="name in searchBarCtrl.allNames">{{name}}</option>	
 				</select>
 				<select name="" id="measure" ng-model="condition.measure_id">
-					<option ng-selected="$index == condition.measure_id" value="{{$index}}" ng-repeat="measure in searchBarCtrl.allMeasures">{{measure}}</option>	
+					<option ng-selected="$index == condition.measure_id" ng-disabled="$index == 0" value="{{$index}}" ng-repeat="measure in searchBarCtrl.allMeasures">{{measure}}</option>	
 				</select>
-				<input type="text" ng-model="condition.value">
+				<input type="text" ng-model="condition.value" placeholder="Input Value Here">
 			</form>
-			<div class="delete-button">
+			<div class="delete-button" ng-click="searchBarCtrl.removeCondition($index)">
 				<div></div>
 			</div>
 		</section>			
-		<section class="condition add-container">
+		<section class="condition add-container" ng-click="searchBarCtrl.addCondition()">
 			<div class="add-button">
 				<div></div>
 			</div>

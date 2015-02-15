@@ -15,34 +15,32 @@ angular.module('sightApp').controller('SearchBarController', function($scope) {
       count: 30
     }
   ];
-  this.allNames = ['Title', 'Author', 'Year', 'Conference'];
-  this.allMeasures = ['>', '<', 'Has', '='];
+  this.allNames = ['Metric', 'Title', 'Author', 'Year', 'Conference'];
+  this.allMeasures = ['Relation', '>', '<', 'Has', '='];
   this.allConditions = [
     {
-      name_id: 0,
-      measure_id: 0,
-      value: "aoeu"
+      name_id: 1,
+      measure_id: 2,
+      value: ""
     }, {
       name_id: 2,
       measure_id: 1,
       value: "aoeuA"
     }, {
       name_id: 3,
-      measure_id: 0,
-      value: "aoeuAE"
-    }, {
-      name_id: 0,
-      measure_id: 0,
-      value: "aoeu"
-    }, {
-      name_id: 2,
       measure_id: 1,
-      value: "aoeuA"
-    }, {
-      name_id: 3,
-      measure_id: 0,
       value: "aoeuAE"
     }
   ];
+  this.removeCondition = function(index) {
+    return this.allConditions.splice(index, 1);
+  };
+  this.addCondition = function() {
+    return this.allConditions.push({
+      name_id: 0,
+      measure_id: 0,
+      value: ""
+    });
+  };
   return 0;
 });
