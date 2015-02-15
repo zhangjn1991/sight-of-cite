@@ -8,18 +8,31 @@ $color-text-fade:rgba(#607b8d,0.5);
 $color-background:#f9fafb;
 $color-background-table:$color-background;
 $color-background-table-secondary:rgba(#9db1bf,0.1);
-$color-border-table:rgba(#c0ccd5,0.5);
+$color-background-hover:rgba($color-text-fade,0.1);
+$color-background-focus:rgba($color-text-fade,0.3);
+$color-border:rgba(#c0ccd5,0.5);
+$color-border-fade:rgba(#c0ccd5,0.3);
 
 $z-main:0;
 $z-sidebar:1;
 $z-header:2;
 
-$search-bar-width:20%;
+$search-bar-width:15%;
 $info-bar-width:20%;
 $header-bar-height:6%;
 
+$time-transition:0.3s;
+
 @mixin border($direction, $color){
 	border-#{$direction}:1px solid $color;
+}
+
+@mixin shadow($xoff, $yoff){
+	box-shadow: $xoff $yoff 30px 0px rgba(0,0,0,0.5);	
+}
+
+@mixin transition($prop, $time:$time-transition){
+	-webkit-transition:$prop $time;
 }
 
 
@@ -137,14 +150,14 @@ header{
 			}
 
 			.ui-grid-cell{
-				border-color:$color-border-table;
+				border-color:$color-border;
 			}
 
 
 		}
 
 		.ui-grid-header-cell{
-			border-color:$color-border-table;	
+			border-color:$color-border;	
 		}
 	}
 
@@ -160,7 +173,7 @@ header{
 	width:$info-bar-width;
 	height:100% - $header-bar-height;		
 
-
+	@include shadow(5px, 0);
 
 	.content-container{		
 
@@ -171,7 +184,7 @@ header{
 		color:$color-text-primary;
 		font-weight:300;
 
-		box-shadow: 5px 0px 30px 0px rgba(0,0,0,0.5);
+		
 
 		h1{
 			font-weight:inherit;
@@ -213,7 +226,167 @@ header{
 	width:$search-bar-width;
 	height: 100% - $header-bar-height;
 
-	background:lightgray;
+	background:color-background;
+	color:$color-text-primary;
 
+	@include shadow(-5px, 0);	
+
+	h2{	
+		font-weight:300;
+		font-size:1.2em;		
+	}
+
+	.container{
+		padding:0.5em 0;
+	}
+
+}
+
+.collection-container{
 	
+	@include border(bottom,$color-border);
+
+	section{
+		display:flex;
+		align-items:center;
+		justify-content:space-between;
+		
+		padding:0.5em 1em;		
+
+		&.collection{
+			padding-left:2em;
+		}	
+	}
+
+	.count{
+		float:right;
+		font-size:0.8em;
+		font-weight:300;
+		color:$color-text-secondary;
+	}
+
+	h2{
+		float:left;
+	}
+
+	h3{
+		font-weight:300;
+		font-size:0.8em;
+	}
+}
+
+.search-container{	
+
+	section{
+		padding:1em;
+	}
+
+	.search-button{
+		
+
+		width:70%;
+		height:15px;
+
+		margin:1em auto;
+		padding:8px 0;
+		background:$color-highlight;
+
+		div{
+			width:100%;
+			height:100%;
+
+			background:url('../resources/search-icon.png') no-repeat center;
+			background-size:contain;
+		}
+	}
+
+	.condition{
+		position:relative;
+
+		@include border(top,$color-border-fade);				
+
+		&:hover .delete-button{
+			opacity:1;
+			pointer-events:auto;
+		}
+
+		select,input{
+			color:$color-text-primary;
+			@include transition(background);
+			
+			&:hover{				
+				background:$color-background-hover;
+			}
+			&:focus{
+				outline:0;
+				background:$color-background-focus;
+			}
+		}
+
+		input{			
+			padding:0.5em;
+
+			width:100%;
+
+			background:transparent;
+
+			@include border(bottom, $color-border-fade);
+		}
+
+		.delete-button{
+			position:absolute;
+			top:0;
+			right:0;			
+			padding:7px;
+
+			opacity:0;
+			pointer-events:none;
+
+			-webkit-transition:background $time-transition, opacity $time-transition;
+
+			&:hover{
+				background:$color-background-hover;
+			}
+
+			& > div{
+				width:10px;
+				height:10px;
+				background:url('../resources/delete-icon.png');
+				background-size:contain;	
+			}
+
+			
+		}
+
+
+	}
+
+	.add-container{
+		display:flex;
+		align-items:center;
+		padding:0.5em 1em;
+		cursor:pointer;
+
+		@include transition(background);
+
+		&:hover{
+			background:$color-background-hover;
+		}
+
+		.add-button{
+			display:inline-block;
+			padding:7px;
+			& > div{
+				width:10px;
+				height:10px;
+				background:url('../resources/add-icon.png');
+				background-size:contain;	
+			}
+		}
+		span{
+			font-size:0.8em;
+			color:$color-text-fade;
+		}
+	}
+
 }
