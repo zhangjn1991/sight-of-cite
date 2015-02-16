@@ -107,6 +107,10 @@ header{
 
 			@include clickable;
 
+			&.active{
+				background:$color-highlight;
+			}
+
 			span{
 				width:100%;
 				text-align:center;
@@ -175,26 +179,24 @@ header{
 	top: $header-bar-height;
 	z-index:$z-sidebar;
 	width:$info-bar-width;
-	height:100% - $header-bar-height;		
+	height:100% - $header-bar-height;
+	font-weight:300;
 
 	@include shadow(5px, 0);
 
-	.content-container{		
+	h1{
+		font-weight:inherit;
+		font-size:1.2em;
+		margin:1em;
+	}
+
+	.detail-container{		
 
 		height:100%;	
 		width:100%;
 		overflow:scroll;	
 
-		color:$color-text-primary;
-		font-weight:300;
-
-		
-
-		h1{
-			font-weight:inherit;
-			font-size:1.2em;
-			margin:1em;
-		}
+		color:$color-text-primary;		
 
 		section{
 			margin: 1em;

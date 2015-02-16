@@ -3,6 +3,8 @@ angular.module('sightApp').directive('headerBar', function() {
   return {
     restrict: 'E',
     scope: true,
-    templateUrl: 'js/components/header-bar/header-bar.html'
+    templateUrl: 'js/components/header-bar/header-bar.html',
+    controller: "HeaderController",
+    controllerAs: "headerCtrl"
   };
 });
