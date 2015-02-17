@@ -5,11 +5,14 @@ $color-text-primary:$color-primary;
 $color-text-secondary:$color-secondary;
 $color-text-revert:#f9fafb;
 $color-text-fade:rgba(#607b8d,0.5);
+$color-text-textarea:$color-text-secondary;
 $color-background:#f9fafb;
 $color-background-table:$color-background;
 $color-background-table-secondary:rgba(#9db1bf,0.1);
 $color-background-hover:rgba($color-text-fade,0.1);
 $color-background-focus:rgba($color-text-fade,0.3);
+$color-background-textarea:#f4f5f7;
+
 $color-border:rgba(#c0ccd5,0.5);
 $color-border-fade:rgba(#c0ccd5,0.3);
 
@@ -184,13 +187,7 @@ header{
 
 	@include shadow(5px, 0);
 
-	h1{
-		font-weight:inherit;
-		font-size:1.2em;
-		margin:1em;
-	}
-
-	.detail-container{		
+	.content-container{		
 
 		height:100%;	
 		width:100%;
@@ -212,6 +209,12 @@ header{
 			margin:0.5em;
 		}
 
+		h1{
+			font-weight:inherit;
+			font-size:1.2em;
+			margin:1em;
+		}
+
 		.tag{
 			display:inline-block;
 			background:$color-secondary;
@@ -223,7 +226,24 @@ header{
 			@include clickable;
 		}
 
+		textarea{
+			margin:0.5em;
+			padding:0.5em;
+			resize:none;
+			background:$color-background-textarea;
+			color:$color-text-textarea;
+			border: 1px solid $color-border;
+
+			font-family:"Helvetica Neue";
+			font-size:1em;
+			box-sizing: border-box;
+			width:90%;
+			height:25em;			
+		}
+
 	}
+
+
 }
 
 .search-bar{

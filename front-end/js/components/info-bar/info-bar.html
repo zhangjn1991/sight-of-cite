@@ -1,5 +1,5 @@
 <div class="info-bar">
-	<div class="detail-container" ng-show="globalCtrl.tabIndex == 0">
+	<div class="content-container" ng-show="globalCtrl.tabIndex == 0">
 		<h1>{{infoBarCtrl.entity.title}}</h1>
 		<section>
 			<h2>Authors</h2>
@@ -15,16 +15,22 @@
 		</section>
 		<section>
 			<h2>Tags</h2>
-			<p>
-				<span class="tag" ng-repeat="tag in infoBarCtrl.entity.tag">{{tag}}</span>
-			</p>
+			<tag-container entity="infoBarCtrl.entity"></tag-container>
 		</section>
 		<section>
 			<h2>Abstract</h2>
 			<p>{{infoBarCtrl.entity.abstract}}</p>
 		</section>
 	</div>
-	<div class="note-container" ng-show="globalCtrl.tabIndex == 1">
-		<h1>Notes</h1>
+	<div class="content-container" ng-show="globalCtrl.tabIndex == 1">
+		<h1>Tags</h1>
+		<section>
+			<tag-container entity="infoBarCtrl.entity"></tag-container>
+		</section>
+		<h1>Comments</h1>
+		<section>
+			<textarea name="" id="">{{infoBarCtrl.entity.comment}}</textarea>
+		</section>
+
 	</div>
 </div>

@@ -1,4 +1,4 @@
 angular.module 'sightApp'
 .controller "GlobalController", ($scope)->
-	@.tabIndex = 1;
+	@.tabIndex = 0;
 	0

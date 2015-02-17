@@ -89,24 +89,24 @@ header {
   height: 94%;
   font-weight: 300;
   box-shadow: 5px 0 30px 0px rgba(0, 0, 0, 0.5); }
-  .info-bar h1 {
-    font-weight: inherit;
-    font-size: 1.2em;
-    margin: 1em; }
-  .info-bar .detail-container {
+  .info-bar .content-container {
     height: 100%;
     width: 100%;
     overflow: scroll;
     color: #334e5f; }
-    .info-bar .detail-container section {
+    .info-bar .content-container section {
       margin: 1em; }
-    .info-bar .detail-container h2 {
+    .info-bar .content-container h2 {
       font-weight: 500;
       font-size: 0.8em;
       color: rgba(96, 123, 141, 0.5); }
-    .info-bar .detail-container p {
+    .info-bar .content-container p {
       margin: 0.5em; }
-    .info-bar .detail-container .tag {
+    .info-bar .content-container h1 {
+      font-weight: inherit;
+      font-size: 1.2em;
+      margin: 1em; }
+    .info-bar .content-container .tag {
       display: inline-block;
       background: #5d7b92;
       color: #f9fafb;
@@ -115,8 +115,20 @@ header {
       font-size: 0.8em;
       -webkit-transition: background 0.3s;
       cursor: pointer; }
-      .info-bar .detail-container .tag:hover {
+      .info-bar .content-container .tag:hover {
         background: #6ba7d5; }
+    .info-bar .content-container textarea {
+      margin: 0.5em;
+      padding: 0.5em;
+      resize: none;
+      background: #f4f5f7;
+      color: #5d7b92;
+      border: 1px solid rgba(192, 204, 213, 0.5);
+      font-family: "Helvetica Neue";
+      font-size: 1em;
+      box-sizing: border-box;
+      width: 90%;
+      height: 25em; }
 
 .search-bar {
   display: flex;
