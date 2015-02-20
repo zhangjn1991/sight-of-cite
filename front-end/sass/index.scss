@@ -155,6 +155,10 @@ header{
 				background:$color-background-table-secondary;
 			}
 
+			&:hover .ui-grid-cell{
+				background:$color-background-hover;
+			}
+
 			.ui-grid-cell.active{
 				background-color:$color-highlight;	
 				color:$color-text-revert;
@@ -163,6 +167,8 @@ header{
 			.ui-grid-cell{
 				border-color:$color-border;
 			}
+
+
 
 
 		}
@@ -236,9 +242,14 @@ header{
 
 			font-family:"Helvetica Neue";
 			font-size:1em;
+			font-weight:300;
 			box-sizing: border-box;
 			width:90%;
-			height:25em;			
+			height:25em;	
+
+			&:focus{
+				outline:0;				
+			}
 		}
 
 	}

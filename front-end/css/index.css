@@ -72,6 +72,8 @@ header {
         background: #f9fafb; }
       .table-view-container .ui-grid .ui-grid-row:nth-child(even) .ui-grid-cell {
         background: rgba(157, 177, 191, 0.1); }
+      .table-view-container .ui-grid .ui-grid-row:hover .ui-grid-cell {
+        background: rgba(96, 123, 141, 0.1); }
       .table-view-container .ui-grid .ui-grid-row .ui-grid-cell.active {
         background-color: #6ba7d5;
         color: #f9fafb; }
@@ -126,9 +128,12 @@ header {
       border: 1px solid rgba(192, 204, 213, 0.5);
       font-family: "Helvetica Neue";
       font-size: 1em;
+      font-weight: 300;
       box-sizing: border-box;
       width: 90%;
       height: 25em; }
+      .info-bar .content-container textarea:focus {
+        outline: 0; }
 
 .search-bar {
   display: flex;
