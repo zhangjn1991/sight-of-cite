@@ -16,6 +16,7 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
         width: '20%',
         minWidth: 200
       }, {
+        name: 'year',
         field: 'year',
         width: '10%',
         maxWidth: 100
