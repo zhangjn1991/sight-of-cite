@@ -1,26 +1,59 @@
 <div class="info-bar">
-	<div class="content-container" ng-show="globalCtrl.tabIndex == 0">
-		<h1>{{infoBarCtrl.entity.title}}</h1>
-		<section>
-			<h2>Authors</h2>
-			<p>{{infoBarCtrl.entity.author}}</p>
-		</section>
-		<section>
-			<h2>Year</h2>
-			<p>{{infoBarCtrl.entity.year}}</p>
-		</section>
-		<section>
-			<h2>Conference</h2>
-			<p>{{infoBarCtrl.entity.conference}}</p>
-		</section>
-		<section>
-			<h2>Tags</h2>
-			<tag-container entity="infoBarCtrl.entity"></tag-container>
-		</section>
-		<section>
-			<h2>Abstract</h2>
-			<p>{{infoBarCtrl.entity.abstract}}</p>
-		</section>
+	<div class="content-container detail" ng-show="globalCtrl.tabIndex == 0">
+		<div class="button-container">
+			<div class="button edit" ng-click="infoBarCtrl.startEdit()">Edit</div>
+			<div class="button tick" ng-click="infoBarCtrl.saveEdit()">Save</div>
+			<div class="button tick" ng-click="infoBarCtrl.cancelEdit()">Cancel</div>
+		</div>
+		<div class="display-container" ng-hide="infoBarCtrl.isEditing">
+			<h1>{{infoBarCtrl.entity.title}}</h1>			
+			<section>
+				<h2>Authors</h2>
+				<p>{{infoBarCtrl.entity.author}}</p>
+			</section>
+			<section>
+				<h2>Year</h2>
+				<p>{{infoBarCtrl.entity.year}}</p>
+			</section>
+			<section>
+				<h2>Conference</h2>
+				<p>{{infoBarCtrl.entity.conference}}</p>
+			</section>
+			<section>
+				<h2>Tags</h2>
+				<tag-container entity="infoBarCtrl.entity"></tag-container>
+			</section>
+			<section>
+				<h2>Abstract</h2>
+				<p>{{infoBarCtrl.entity.abstract}}</p>
+			</section>
+		</div>
+		<div class="edit-container" ng-show="infoBarCtrl.isEditing">
+			<section>
+				<h2>Title</h2>
+				<textarea name="title" id="title" ng-model="infoBarCtrl.tempEntityDetail.title" placeholder="Publication Title"></textarea>
+			</section>
+			<section>
+				<h2>Authors</h2>
+				<textarea name="author" id="author" ng-model="infoBarCtrl.tempEntityDetail.author" placeholder="Author Names"></textarea>
+			</section>
+			<section>
+				<h2>Year</h2>
+				<textarea name="year" id="year" ng-model="infoBarCtrl.tempEntityDetail.year" placeholder="Publication Year"></textarea>
+			</section>
+			<section>
+				<h2>Conference</h2>
+				<textarea name="conference" id="conference" ng-model="infoBarCtrl.tempEntityDetail.conference" placeholder="Conference Title"></textarea>
+			</section>
+			<section>
+				<h2>Tags</h2>
+				<textarea name="tags" id="tags" placeholder="Put tags here, separate with comma"></textarea>
+			</section>
+			<section>
+				<h2>Abstract</h2>
+				<textarea name="abstract" id="abstract" ng-model="infoBarCtrl.tempEntityDetail.abstract" placeholder="Put abstract here."></textarea>
+			</section>
+		</div>
 	</div>
 	<div class="content-container" ng-show="globalCtrl.tabIndex == 1">
 		<h1>Tags</h1>

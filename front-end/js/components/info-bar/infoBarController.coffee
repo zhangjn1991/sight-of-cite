@@ -1,5 +1,6 @@
 angular.module 'sightApp'
 .controller "InfoBarController", ($scope)->
+	@isEditing=false;
 	@entity = {
 		"title":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Provident, odit!",
 		"author":"Lorem ipsum dolor sit amet.",
@@ -9,4 +10,25 @@ angular.module 'sightApp'
 		"tag":["Visualization","Network","Graph"],
 		"comment":"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolore accusantium eius adipisci illum mollitia possimus porro, id veniam nemo molestiae quaerat recusandae veritatis at vel aspernatur quia eum nostrum aperiam alias fuga! Hic, quaerat, placeat vitae nulla cumque iusto non possimus obcaecati, pariatur odio qui cum dicta. Nisi praesentium, aliquam."
 	}
+
+	@tempEntityDetail = null;
+
+
+	@startEdit = ()->		
+		@tempEntityDetail = _.clone @entity;
+		@isEditing = true;
+
+	@saveEdit = ()->
+		@entity = _.clone @tempEntityDetail;
+		@isEditing = false;
+
+
+	@cancelEdit = ()->
+		@tempEntityDetail = null;
+		@isEditing = false;
+
+
+
+
+
 	0

@@ -17,7 +17,7 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
         minWidth: 200
       }, {
         name: 'year',
-        field: 'year',
+        field: 'pub_year',
         width: '10%',
         maxWidth: 100
       }, {

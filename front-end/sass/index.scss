@@ -202,6 +202,8 @@ header{
 		color:$color-text-primary;		
 
 		section{
+			display:flex;
+			flex-direction:column;
 			margin: 1em;
 		}
 
@@ -244,8 +246,7 @@ header{
 			font-size:1em;
 			font-weight:300;
 			box-sizing: border-box;
-			width:90%;
-			height:25em;	
+/* 			height:25em;	 */
 
 			&:focus{
 				outline:0;				
@@ -254,8 +255,39 @@ header{
 
 	}
 
+	.edit-container{
+		#title{
+			height:6em;
+		}
+		#author{
+			height:6em;
+		}
+		#year{
+			height:3em;
+		}
+		#conference{
+			height:6em;
+		}
+		#abstract{
+			height:30em;
+		}
+	}
+
 
 }
+
+.button-container{
+	position:absolute;
+	top:0;
+	right:0;
+
+	display: flex; 
+
+	.button{
+		margin:0 1em;
+	}
+}
+
 
 .search-bar{
 	display:flex;
@@ -317,7 +349,7 @@ header{
 	}
 }
 
-.button-container{
+.search-button-container{
 	flex:none;
 	padding:0.5em 0;
 	@include border(bottom,$color-border);
