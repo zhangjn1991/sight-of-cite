@@ -4,7 +4,7 @@ angular.module "sightApp"
 	
 	$scope.setActiveRow = (row)->
 		@activeRow = row
-		# console.log row
+		$scope.globalCtrl.infobarCtrl.setCurrentEntity(row.entity);
 
 	$scope.gridOptions = 
 		enableSorting: true,

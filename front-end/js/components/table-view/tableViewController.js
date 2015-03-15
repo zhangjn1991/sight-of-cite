@@ -2,7 +2,8 @@
 angular.module("sightApp").controller("TableViewController", function($scope, $http) {
   $scope.activeRow = null;
   $scope.setActiveRow = function(row) {
-    return this.activeRow = row;
+    this.activeRow = row;
+    return $scope.globalCtrl.infobarCtrl.setCurrentEntity(row.entity);
   };
   $scope.gridOptions = {
     enableSorting: true,
