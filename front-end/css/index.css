@@ -19,6 +19,39 @@ body {
   width: 65%;
   height: 94%; }
 
+.button-container {
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0;
+  pointer-events: none;
+  -webkit-transition: opacity 0.3s; }
+
+.button {
+  display: flex;
+  justify-content: center;
+  -webkit-transition: background 0.3s;
+  cursor: pointer; }
+  .button:hover {
+    background: #6ba7d5; }
+  .button > div {
+    height: 100%;
+    width: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain; }
+  .button.edit > div {
+    background-image: url("../resources/edit-icon.png"); }
+  .button.cross > div {
+    background-image: url("../resources/cross-icon.png"); }
+  .button.trash > div {
+    background-image: url("../resources/trash-icon.png"); }
+  .button.tick > div {
+    background-image: url("../resources/tick-icon.png"); }
+  .button.hide > div {
+    background-image: url("../resources/hide-icon.png"); }
+
 header {
   position: absolute;
   top: 0;
@@ -91,11 +124,21 @@ header {
   height: 94%;
   font-weight: 300;
   box-shadow: 5px 0 30px 0px rgba(0, 0, 0, 0.5); }
+  .info-bar .button {
+    width: 2em;
+    height: 2em;
+    -webkit-transition: background 0.3s;
+    cursor: pointer; }
+    .info-bar .button:hover {
+      background: rgba(96, 123, 141, 0.1); }
   .info-bar .content-container {
     height: 100%;
     width: 100%;
     overflow: scroll;
     color: #334e5f; }
+    .info-bar .content-container.detail:hover .button-container {
+      opacity: 1;
+      pointer-events: auto; }
     .info-bar .content-container section {
       display: flex;
       flex-direction: column;
@@ -145,14 +188,6 @@ header {
     height: 6em; }
   .info-bar .edit-container #abstract {
     height: 30em; }
-
-.button-container {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: flex; }
-  .button-container .button {
-    margin: 0 1em; }
 
 .search-bar {
   display: flex;

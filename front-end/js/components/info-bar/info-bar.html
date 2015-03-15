@@ -1,11 +1,12 @@
 <div class="info-bar">
-	<div class="content-container detail" ng-show="globalCtrl.tabIndex == 0">
-		<div class="button-container">
-			<div class="button edit" ng-click="infoBarCtrl.startEdit()">Edit</div>
-			<div class="button tick" ng-click="infoBarCtrl.saveEdit()">Save</div>
-			<div class="button tick" ng-click="infoBarCtrl.cancelEdit()">Cancel</div>
-		</div>
+	<div class="content-container detail" ng-show="globalCtrl.tabIndex == 0">			
+		
 		<div class="display-container" ng-hide="infoBarCtrl.isEditing">
+			<div class="button-container">
+				<div class="button edit" ng-click="infoBarCtrl.startEdit()">
+					<div></div>
+				</div>
+			</div>
 			<h1>{{infoBarCtrl.entity.title}}</h1>			
 			<section>
 				<h2>Authors</h2>
@@ -29,6 +30,14 @@
 			</section>
 		</div>
 		<div class="edit-container" ng-show="infoBarCtrl.isEditing">
+			<div class="button-container">
+				<div class="button tick" ng-click="infoBarCtrl.saveEdit()">
+					<div></div>
+				</div>
+				<div class="button cross" ng-click="infoBarCtrl.cancelEdit()">
+					<div></div>	
+				</div>
+			</div>
 			<section>
 				<h2>Title</h2>
 				<textarea name="title" id="title" ng-model="infoBarCtrl.tempEntityDetail.title" placeholder="Publication Title"></textarea>

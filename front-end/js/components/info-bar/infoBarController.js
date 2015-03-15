@@ -17,7 +17,8 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
   };
   this.saveEdit = function() {
     this.entity = _.clone(this.tempEntityDetail);
-    return this.isEditing = false;
+    this.isEditing = false;
+    return $.post($scope.globalCtrl.getServerAddr() + "add_paper", this.entity);
   };
   this.cancelEdit = function() {
     this.tempEntityDetail = null;

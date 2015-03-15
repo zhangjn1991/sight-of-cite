@@ -21,7 +21,7 @@ angular.module 'sightApp'
 	@saveEdit = ()->
 		@entity = _.clone @tempEntityDetail;
 		@isEditing = false;
-
+		$.post($scope.globalCtrl.getServerAddr()+"add_paper",@entity);
 
 	@cancelEdit = ()->
 		@tempEntityDetail = null;

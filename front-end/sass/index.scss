@@ -34,8 +34,18 @@ $time-transition:0.3s;
 	box-shadow: $xoff $yoff 30px 0px rgba(0,0,0,0.5);	
 }
 
-@mixin transition($prop, $time:$time-transition){
+@mixin transition($prop:opacity, $time:$time-transition){
 	-webkit-transition:$prop $time;
+}
+
+@mixin show(){
+	opacity:1;
+	pointer-events:auto;
+}
+
+@mixin hide(){
+	opacity:0;
+	pointer-events:none;
 }
 
 @mixin clickable($hover-color:$color-highlight){
@@ -74,6 +84,48 @@ body{
 	width:100% - $search-bar-width - $info-bar-width;
 	height:100% - $header-bar-height;
 }
+
+
+.button-container{	
+	display:flex;	
+	position:absolute;
+	top:0;
+	right:0;
+	
+
+	@include hide;
+
+	@include transition;
+
+}
+
+.button{
+	display:flex;
+							
+	justify-content:center;
+	
+	@include clickable;
+
+	& > div{
+		height:100%;
+		width:50%;	
+		background-repeat: no-repeat;
+		background-position:center;
+		background-size:contain;	
+	}
+
+
+	$icon-list: 'edit','cross','trash','tick','hide';
+
+	@each $icon in $icon-list{
+		&.#{$icon} > div{
+			background-image:url('../resources/#{$icon}-icon.png');	
+		}
+	}
+
+}
+
+
 
 header{
 	position:absolute;
@@ -193,6 +245,12 @@ header{
 
 	@include shadow(5px, 0);
 
+	.button{
+		width:2em;
+		height:2em;
+		@include clickable($color-background-hover);
+	}
+
 	.content-container{		
 
 		height:100%;	
@@ -200,6 +258,12 @@ header{
 		overflow:scroll;	
 
 		color:$color-text-primary;		
+
+		&.detail:hover{
+			.button-container{
+				@include show;
+			}
+		}
 
 		section{
 			display:flex;
@@ -276,17 +340,6 @@ header{
 
 }
 
-.button-container{
-	position:absolute;
-	top:0;
-	right:0;
-
-	display: flex; 
-
-	.button{
-		margin:0 1em;
-	}
-}
 
 
 .search-bar{
