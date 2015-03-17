@@ -22,7 +22,13 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
         width: '10%',
         maxWidth: 100
       }, {
-        field: 'conference',
+        name: 'Citation Count',
+        field: 'cite_count',
+        width: '10%',
+        minWidth: 200
+      }, {
+        name: 'ISBN/DOI',
+        field: 'ISBN',
         width: '30%',
         minWidth: 200
       }

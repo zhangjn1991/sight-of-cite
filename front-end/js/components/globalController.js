@@ -3,7 +3,7 @@ angular.module('sightApp').controller("GlobalController", function($scope) {
   this.tabIndex = 0;
   this.infoBarCtrl = null;
   this.getServerAddr = function() {
-    return "http://127.0.0.1:3000/";
+    return "http://192.168.0.103:8888/SightOfCite/API.php?action=";
   };
   return 0;
 });

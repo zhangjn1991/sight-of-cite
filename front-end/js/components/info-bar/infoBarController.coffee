@@ -18,15 +18,23 @@ angular.module 'sightApp'
 	@tempEntityDetail = null;
 
 
-	@startEdit = ()->		
-		@tempEntityDetail = _.clone @entity;
+	@startEdit = ()->
+		@tempEntityDetail = @tempEntityDetail || {}
+		@overwriteObject @entity, @tempEntityDetail
 		@isEditing = true;
 
 	@saveEdit = ()->
 		@overwriteObject @tempEntityDetail, @entity;
 		#must use overwrite, so don't loose reference in the table.
+		
 		@isEditing = false;
-		$.post($scope.globalCtrl.getServerAddr()+"add_paper",@entity);
+		# @entity.pub_id = 124;
+		# url = $scope.globalCtrl.getServerAddr()+"get_all_paper"
+		# console.log url;
+		
+		# $.post($scope.globalCtrl.getServerAddr(),{action:"add_paper",data:@entity},(d)->
+		# 	console.log(d)
+		# );
 
 	@cancelEdit = ()->
 		@tempEntityDetail = null;
@@ -39,6 +47,5 @@ angular.module 'sightApp'
 	@overwriteObject = (fromObj,toObj)->
 		for k,v of fromObj
 			toObj[k]=v
-
 
 	0

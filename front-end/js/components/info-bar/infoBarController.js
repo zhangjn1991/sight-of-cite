@@ -5,13 +5,13 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
   this.isEditing = false;
   this.tempEntityDetail = null;
   this.startEdit = function() {
-    this.tempEntityDetail = _.clone(this.entity);
+    this.tempEntityDetail = this.tempEntityDetail || {};
+    this.overwriteObject(this.entity, this.tempEntityDetail);
     return this.isEditing = true;
   };
   this.saveEdit = function() {
     this.overwriteObject(this.tempEntityDetail, this.entity);
-    this.isEditing = false;
-    return $.post($scope.globalCtrl.getServerAddr() + "add_paper", this.entity);
+    return this.isEditing = false;
   };
   this.cancelEdit = function() {
     this.tempEntityDetail = null;

@@ -294,6 +294,7 @@ header{
 			padding:0.5em;
 			margin:0 0.5em 0.5em 0;
 			font-size:0.8em;
+			text-transform: capitalize;
 
 			@include clickable;
 		}
