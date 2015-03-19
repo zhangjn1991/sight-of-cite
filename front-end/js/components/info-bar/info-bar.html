@@ -1,5 +1,5 @@
 <div class="info-bar">
-	<div class="content-container detail" ng-show="globalCtrl.tabIndex == 0">			
+	<div class="content-container detail-container" ng-show="globalCtrl.tabIndex == 0">			
 		
 		<div class="display-container" ng-hide="infoBarCtrl.isEditing">
 			<div class="button-container">
@@ -64,7 +64,7 @@
 			</section>
 		</div>
 	</div>
-	<div class="content-container" ng-show="globalCtrl.tabIndex == 1">
+	<div class="content-container note-container" ng-show="globalCtrl.tabIndex == 1">
 		<h1>Tags</h1>
 		<section>
 			<tag-container entity="infoBarCtrl.entity"></tag-container>

@@ -259,11 +259,7 @@ header{
 
 		color:$color-text-primary;		
 
-		&.detail:hover{
-			.button-container{
-				@include show;
-			}
-		}
+		
 
 		section{
 			display:flex;
@@ -337,8 +333,18 @@ header{
 			height:30em;
 		}
 	}
-
-
+	
+	.detail-container:hover{
+		.button-container{
+			@include show;
+		}
+	}
+	
+	.note-container{
+		textarea{
+			height:25em;
+		}
+	}
 }
 
 

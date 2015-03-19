@@ -136,9 +136,6 @@ header {
     width: 100%;
     overflow: scroll;
     color: #334e5f; }
-    .info-bar .content-container.detail:hover .button-container {
-      opacity: 1;
-      pointer-events: auto; }
     .info-bar .content-container section {
       display: flex;
       flex-direction: column;
@@ -189,6 +186,11 @@ header {
     height: 6em; }
   .info-bar .edit-container #abstract {
     height: 30em; }
+  .info-bar .detail-container:hover .button-container {
+    opacity: 1;
+    pointer-events: auto; }
+  .info-bar .note-container textarea {
+    height: 25em; }
 
 .search-bar {
   display: flex;
