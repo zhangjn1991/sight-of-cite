@@ -23,6 +23,9 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
       return this.startEdit();
     }
   };
+  this.removeCurrentEntity = function() {
+    return this.entity = {};
+  };
   this.overwriteObject = function(fromObj, toObj) {
     var k, v, _results;
     _results = [];

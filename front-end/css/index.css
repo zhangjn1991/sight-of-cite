@@ -89,15 +89,15 @@ header {
         text-align: center; }
   header .button-container {
     top: 0;
-    left: 1em;
+    left: 0;
     opacity: 1;
     pointer-events: auto;
     height: 100%;
-    width: 2em;
     z-index: 2; }
     header .button-container .button {
       height: 100%;
-      widtH: 100%; }
+      width: 2em;
+      margin-left: 1em; }
 
 .table-view-container {
   width: 100%;

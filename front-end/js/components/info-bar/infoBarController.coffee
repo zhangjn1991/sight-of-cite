@@ -43,6 +43,8 @@ angular.module 'sightApp'
 	@setCurrentEntity = (entity)->
 		@entity = entity;
 		if @isNewEntity(entity) then @startEdit()
+	@removeCurrentEntity = ()->
+		@entity = {}
 
 
 	@overwriteObject = (fromObj,toObj)->

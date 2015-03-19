@@ -9,5 +9,8 @@ angular.module('sightApp').controller("GlobalController", function($scope) {
   this.addNewPublication = function() {
     return this.tableViewCtrl.addEmptyRow();
   };
+  this.removeSelectedPublication = function() {
+    return this.tableViewCtrl.removeActiveRow();
+  };
   return 0;
 });

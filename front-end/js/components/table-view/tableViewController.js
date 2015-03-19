@@ -14,6 +14,16 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
     this.gridOptions.data.push(newEntity);
     return this.setActiveRow(newEntity);
   };
+  this.removeFromArray = function(array, element) {
+    return array.splice(array.indexOf(element), 1);
+  };
+  this.removeActiveRow = function() {
+    if (this.activeRowEntity == null) {
+      return;
+    }
+    this.removeFromArray(this.gridOptions.data, this.activeRowEntity);
+    return $scope.globalCtrl.infobarCtrl.removeCurrentEntity();
+  };
   this.gridOptions = {
     enableSorting: true,
     columnDefs: [

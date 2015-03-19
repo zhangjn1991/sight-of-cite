@@ -7,5 +7,6 @@ angular.module 'sightApp'
 	@getServerAddr = ()->"http://192.168.0.103:8888/SightOfCite/API.php?action="
 
 	@addNewPublication = ()->@tableViewCtrl.addEmptyRow()
+	@removeSelectedPublication = ()->@tableViewCtrl.removeActiveRow()
 
 	0

@@ -175,15 +175,16 @@ header{
 
 	.button-container{
 		top:0;
-		left:1em;
+		left:0;
 		@include show;
 		
 		height:100%;
-		width:2em;
+		
 		z-index:$z-header;
 		.button{
-			height:100%;
-			widtH:100%;
+			height:100%;			
+			width:2em;
+			margin-left:1em;
 		}
 	}
 

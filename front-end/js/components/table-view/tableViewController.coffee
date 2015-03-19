@@ -8,13 +8,20 @@ angular.module "sightApp"
 
 	@setActiveRow = (entity)->
 		@activeRowEntity = entity
-		$scope.globalCtrl.infobarCtrl.setCurrentEntity(entity);
+		$scope.globalCtrl.infobarCtrl.setCurrentEntity entity;
 
 	@addEmptyRow = ()->
 		newEntity = {}
 		@gridOptions.data.push(newEntity)
 		@setActiveRow(newEntity)
+	
+	@removeFromArray = (array,element)-> 
+		array.splice(array.indexOf(element),1)
 
+	@removeActiveRow = ()->
+		if(!@activeRowEntity?) then return
+		@removeFromArray(@gridOptions.data,@activeRowEntity)
+		$scope.globalCtrl.infobarCtrl.removeCurrentEntity()
 
 	@gridOptions = 
 		enableSorting: true,
