@@ -18,7 +18,10 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
     return this.isEditing = false;
   };
   this.setCurrentEntity = function(entity) {
-    return this.entity = entity;
+    this.entity = entity;
+    if (this.isNewEntity(entity)) {
+      return this.startEdit();
+    }
   };
   this.overwriteObject = function(fromObj, toObj) {
     var k, v, _results;
@@ -28,6 +31,9 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
       _results.push(toObj[k] = v);
     }
     return _results;
+  };
+  this.isNewEntity = function(entity) {
+    return _.isEmpty(entity);
   };
   return 0;
 });

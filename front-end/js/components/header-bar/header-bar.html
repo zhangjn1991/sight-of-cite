@@ -1,4 +1,9 @@
 <header>
+	<div class="button-container">
+		<div class="button add" ng-click="globalCtrl.addNewPublication()">
+			<div></div>
+		</div>
+	</div>
 	<ul class="tab-container">
 		<li class="tab" ng-repeat="tab in headerCtrl.tabs" ng-class="{active:headerCtrl.isCurrentTab($index)}" ng-click="headerCtrl.setTab($index)"><span>{{tab}}</span></li>
 		<!-- <li class="tab"><span>Detail</span></li>

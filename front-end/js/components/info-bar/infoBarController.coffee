@@ -42,10 +42,13 @@ angular.module 'sightApp'
 
 	@setCurrentEntity = (entity)->
 		@entity = entity;
+		if @isNewEntity(entity) then @startEdit()
 
 
 	@overwriteObject = (fromObj,toObj)->
 		for k,v of fromObj
 			toObj[k]=v
+
+	@isNewEntity = (entity)->_.isEmpty(entity)
 
 	0

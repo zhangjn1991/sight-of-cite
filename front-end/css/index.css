@@ -41,6 +41,8 @@ body {
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain; }
+  .button.add > div {
+    background-image: url("../resources/add-icon.png"); }
   .button.edit > div {
     background-image: url("../resources/edit-icon.png"); }
   .button.cross > div {
@@ -85,6 +87,17 @@ header {
       header .tab-container .tab span {
         width: 100%;
         text-align: center; }
+  header .button-container {
+    top: 0;
+    left: 1em;
+    opacity: 1;
+    pointer-events: auto;
+    height: 100%;
+    width: 2em;
+    z-index: 2; }
+    header .button-container .button {
+      height: 100%;
+      widtH: 100%; }
 
 .table-view-container {
   width: 100%;

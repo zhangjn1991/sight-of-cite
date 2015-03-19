@@ -115,7 +115,7 @@ body{
 	}
 
 
-	$icon-list: 'edit','cross','trash','tick','hide';
+	$icon-list: 'add','edit','cross','trash','tick','hide';
 
 	@each $icon in $icon-list{
 		&.#{$icon} > div{
@@ -138,7 +138,7 @@ header{
 
 	background:$color-primary;
 	
-		.tab-container{
+	.tab-container{
 		position:absolute;
 		top:0;
 		right:0;
@@ -170,6 +170,20 @@ header{
 				width:100%;
 				text-align:center;
 			}
+		}
+	}
+
+	.button-container{
+		top:0;
+		left:1em;
+		@include show;
+		
+		height:100%;
+		width:2em;
+		z-index:$z-header;
+		.button{
+			height:100%;
+			widtH:100%;
 		}
 	}
 

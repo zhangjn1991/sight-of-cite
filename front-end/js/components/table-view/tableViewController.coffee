@@ -1,12 +1,22 @@
 angular.module "sightApp"
 .controller "TableViewController", ($scope,$http)->	
-	$scope.activeRow = null	
-	
-	$scope.setActiveRow = (row)->
-		@activeRow = row
-		$scope.globalCtrl.infobarCtrl.setCurrentEntity(row.entity);
+	self=@
+	$scope.globalCtrl.tableViewCtrl = @
 
-	$scope.gridOptions = 
+
+	@activeRowEntity = null		
+
+	@setActiveRow = (entity)->
+		@activeRowEntity = entity
+		$scope.globalCtrl.infobarCtrl.setCurrentEntity(entity);
+
+	@addEmptyRow = ()->
+		newEntity = {}
+		@gridOptions.data.push(newEntity)
+		@setActiveRow(newEntity)
+
+
+	@gridOptions = 
 		enableSorting: true,
 		columnDefs: [
 			{field: 'title', width: '40%', minWidth:200},
@@ -18,8 +28,11 @@ angular.module "sightApp"
 			{name: 'ISBN/DOI', field: 'ISBN', width: '30%', minWidth:200}
 		]
 
-		rowTemplate: '<div ng-class="{active: grid.appScope.activeRow == row}" ng-click="grid.appScope.setActiveRow(row)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>'
+		rowTemplate: '<div ng-class="{active: grid.appScope.tableViewCtrl.activeRowEntity == row.entity}" ng-click="grid.appScope.tableViewCtrl.setActiveRow(row.entity)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>'
 
 	# $http.get('http://192.168.0.103:8888/SightOfCite/API.php?action=get_all_paper').success (data)-> $scope.gridOptions.data = data;
-	$http.get('data/publication.json').success (data)-> $scope.gridOptions.data = data;
+	$http.get('data/publication.json').success (data)-> self.gridOptions.data = data.slice(0,5);
 	# $http.get($scope.globalCtrl.getServerAddr()+'get_all_paper').success (data)-> $scope.gridOptions.data = data;
+
+
+	0
