@@ -22,12 +22,25 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
       return;
     }
     this.removeFromArray(this.gridOptions.data, this.activeRowEntity);
-    return $scope.globalCtrl.infobarCtrl.removeCurrentEntity();
+    $scope.globalCtrl.infobarCtrl.removeCurrentEntity();
+    console.log("AJAX: delete_paper");
+    return $.post($scope.globalCtrl.getServerAddr(), {
+      action: "delete_paper",
+      data: {
+        pub_id: this.activeRowEntity.pub_id
+      }
+    }, function(res) {
+      return console.log(res);
+    });
   };
   this.gridOptions = {
     enableSorting: true,
     columnDefs: [
       {
+        field: 'pub_id',
+        width: '10%',
+        minWidth: 200
+      }, {
         field: 'title',
         width: '40%',
         minWidth: 200
@@ -48,7 +61,7 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
       }, {
         name: 'ISBN/DOI',
         field: 'ISBN',
-        width: '30%',
+        width: '10%',
         minWidth: 200
       }
     ],

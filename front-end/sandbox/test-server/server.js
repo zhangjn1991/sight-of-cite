@@ -26,18 +26,44 @@ app.get('/',function (req, res){
 	console.log(req)
 })
 
-app.post('/post-data',function(req,res){	
-	// console.log(req);
-	// console.log(req.body);
-  console.log("Received Data");
-  console.log("userId: "+req.body.userId)
-  var filename = "data/" + (new Date()).toLocaleString().replace(/\/|,| |:/g,'_') + ".json";
-  fs.writeFile(filename, JSON.stringify(req.body.data), function(){
-    console.log("Write to: " + filename);
-    // res.sendStatus(200);
-    res.send(req.body.data);
-  })	
+// app.post('/post-data',function(req,res){	
+// 	// console.log(req);
+// 	// console.log(req.body);
+//   console.log("Received Data");
+//   console.log("userId: "+req.body.userId)
+//   var filename = "data/" + (new Date()).toLocaleString().replace(/\/|,| |:/g,'_') + ".json";
+//   fs.writeFile(filename, JSON.stringify(req.body.data), function(){
+//     console.log("Write to: " + filename);
+//     // res.sendStatus(200);
+//     res.send(req.body.data);
+//   })	
+// })
+var MAX_ID = 100;
+
+app.post('/api',function(req,res){
+  console.log("\033[93m---------Request---------\033[0m")
+  console.log("\033[1mAction: " + req.body.action+"\033[0m")
+  console.log(req.body.data)
+  
+
+  switch (req.body.action){
+    case "add_paper":
+      res.status(200).send({pub_id:++MAX_ID})      
+      break;
+    case "delete_paper":
+    case "update_paper":
+      res.status(200).send({pub_id: req.body.data.pub_id})
+      break;    
+    default:
+      res.sendStatus(501);
+  }
+
+
+  
+
+
 })
+
 
 app.post('/add_paper',function(req, res){
   console.log("Post: add_paper");
