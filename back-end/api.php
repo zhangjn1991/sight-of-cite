@@ -71,14 +71,14 @@ else if ($_SERVER ['REQUEST_METHOD'] == 'DELETE') {	// DELETE
 
 
 function get_all_paper() {	
-	
 	global $SEVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
 		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-		$sql = "SELECT * FROM Publication";
+		$sql = "SELECT Publication.pub_id as pub_id, Publication.title as title, Publication.pub_year as pub_year, Publication.cite_count as cite_count, Publication.ISBN as ISBN, Author.name as author, Location.Name as location
+				FROM Author JOIN (Publication JOIN Location ON Publication.loc_id = Location.loc_id) ON Author.author_id = Publication.author_id";
 		$stmt = $conn->prepare ( $sql );
 		$stmt->execute ();
 		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
@@ -193,7 +193,8 @@ function add_paper($paperObj) {
 		$stmt->execute();
 
 // 		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
-		return $NEW_PUB_ID;
+		return array("pub_id" => $NEW_PUB_ID);
+		// return $NEW_PUB_ID;
 		//return $sql;
 	} catch ( PDOException $e ) {
 		echo $sql . "<br>" . $e->getMessage ();
