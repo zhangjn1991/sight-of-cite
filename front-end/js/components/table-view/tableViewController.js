@@ -73,6 +73,7 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
     rowTemplate: '<div ng-class="{active: grid.appScope.tableViewCtrl.activeRowEntity == row.entity}" ng-click="grid.appScope.tableViewCtrl.setActiveRow(row.entity)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>'
   };
   $http.get($scope.globalCtrl.getServerAddr() + '?action=get_all_paper').success(function(data) {
+    console.log(data);
     return self.gridOptions.data = data;
   });
   return 0;
