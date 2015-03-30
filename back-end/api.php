@@ -4,11 +4,17 @@
 
 //exit ( json_encode ( $_POST["data"] ) );
 
-$SERVERNAME = "localhost";
-$PORT = '8889';
-$USERNAME = "root";
-$PASSWORD = "root";
+$SERVERNAME = "engr-cpanel-mysql.engr.illinois.edu";
+$PORT = '3306';
+$USERNAME = "sightofc_root";
+$PASSWORD = "sightofc_root";
 $DBNAME = "sightofc_db";
+
+// $SERVERNAME = "localhost";
+// $PORT = '8889';
+// $USERNAME = "root";
+// $PASSWORD = "root";
+// $DBNAME = "sightofc_db";
 
 $JSONSQLDIC = array();	// Dictionary for traslating JSON & SQL terms
 
@@ -61,17 +67,20 @@ else if($_SERVER ['REQUEST_METHOD'] == 'POST') {	// INSERT
 }
 else if ($_SERVER ['REQUEST_METHOD'] == 'PUT') {	// UPDATE
 	parse_str(file_get_contents("php://input"), $post_vars);
-	$value = update_paper( $post_vars);
+	$value = update_paper( $post_vars['data']);
+	exit ( json_encode( $value) );
 }
 else if ($_SERVER ['REQUEST_METHOD'] == 'DELETE') {	// DELETE
-	$value = delete_paper( $_POST ["data"]);
+	parse_str(file_get_contents("php://input"), $post_vars);
+	$value = delete_paper( $post_vars['data']);
+	exit ( json_encode ( $value ) );
 }
 
 
 
 
 function get_all_paper() {	
-	global $SEVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
 		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
@@ -94,7 +103,7 @@ function search_paper_by_pub_id($pub_id) {
 	
 	if (isset ( $pub_id )) {	//input validation
 		
-	global $SEVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
 		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
@@ -122,7 +131,7 @@ function search_paper_by_title($title_piece) {
 	
 	if (isset ( $title_piece)) {
 	
-	global $SEVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
 		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
@@ -145,7 +154,7 @@ function search_paper_by_title($title_piece) {
 }
 
 function get_max_pub_id(){
-	global $SEVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
 		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
@@ -166,7 +175,7 @@ function get_max_pub_id(){
 // $_POST REQUESTs
 function add_paper($paperObj) {
 	
-	global $SEVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;      
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;      
 	
 	$NEW_PUB_ID = get_max_pub_id() + 1;	
 
@@ -174,7 +183,7 @@ function add_paper($paperObj) {
 		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-		
+
 		$sql = ("INSERT INTO Publication 
 				SET
 				pub_id = :pub_id, 
@@ -205,7 +214,7 @@ function add_paper($paperObj) {
 
 function update_paper($paperObj) {
 	
-	global $SEVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 	
 	try {
 		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
@@ -228,8 +237,8 @@ function update_paper($paperObj) {
 		$stmt->bindParam(":cite_count", $paperObj['cite_count'], PDO::PARAM_INT);
 		$stmt->bindParam(":ISBN", $paperObj['ISBN'], PDO::PARAM_STR );
 		$stmt->execute ();
-		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
-		return $result;
+		//$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
+		return 1;
 	} catch ( PDOException $e ) {
 		echo $e->getMessage ();
 	}
@@ -238,33 +247,30 @@ function update_paper($paperObj) {
 }
 
 function delete_paper($paperObj) {
-	
-	global $SEVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 	
 	try {
 		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-// 		$sql = ("DELETE FROM Publication
-// 				WHERE (pub_id = :pub_id, title = :title, pub_year = :pub_year, cite_count = :cite_count, ISBN = :ISBN)");
-// 		$stmt = $conn->prepare ( $sql );
-		$stmt = $conn->prepare('DELETE FROM Publication
-				WHERE pub_id = :pub_id 
-				AND title = :title 
-				AND pub_year = : pub_year 
-				AND cite_count = :cite_count 
-				AND ISBN = :ISBN
-				');
+
+		$sql = ("DELETE FROM Publication 
+				WHERE pub_id = :pub_id"
+				);
+
+		$stmt = $conn->prepare( $sql );
 		$stmt->bindParam(":pub_id", $paperObj['pub_id'], PDO::PARAM_INT);
-		$stmt->bindParam(":title", $paperObj['title'], PDO::PARAM_STR );
-		$stmt->bindParam(":pub_year", $paperObj['pub_year'], PDO::PARAM_INT);
-		$stmt->bindParam(":cite_count", $paperObj['cite_count'], PDO::PARAM_INT);
-		$stmt->bindParam(":ISBN", $paperObj['ISBN'], PDO::PARAM_STR );
+		// $stmt->bindParam(":title", $paperObj['title'], PDO::PARAM_STR );
+		// $stmt->bindParam(":pub_year", $paperObj['pub_year'], PDO::PARAM_INT);
+		// $stmt->bindParam(":cite_count", $paperObj['cite_count'], PDO::PARAM_INT);
+		// $stmt->bindParam(":ISBN", $paperObj['ISBN'], PDO::PARAM_STR );
 		$stmt->execute ();
-		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
-		return $result;
+		// $result = $stmt->fetchAll ( PDO::FETCH_CLASS );
+		return 1;
+
 	} catch ( PDOException $e ) {
-// 		echo $sql . "<br>" . $e->getMessage ();
+		echo $sql . "<br>" . $e->getMessage ();
 	}
 	
 	$conn = null;
