@@ -4,7 +4,7 @@ angular.module('sightApp').controller("GlobalController", function($scope) {
   this.infoBarCtrl = null;
   this.tableViewCtrl = null;
   this.getServerAddr = function() {
-    return "http://127.0.0.1:3000/api";
+    return "http://192.168.0.103:8888/sight-of-cite/back-end/api.php";
   };
   this.addNewPublication = function() {
     return this.tableViewCtrl.addEmptyRow();

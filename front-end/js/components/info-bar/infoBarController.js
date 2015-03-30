@@ -26,7 +26,7 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
       if (isNewPaper) {
         return self.entity.pub_id = res.pub_id;
       }
-    });
+    }, 'json');
   };
   this.cancelEdit = function() {
     this.tempEntityDetail = null;

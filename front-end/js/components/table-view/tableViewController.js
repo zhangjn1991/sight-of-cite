@@ -42,11 +42,11 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
         minWidth: 200
       }, {
         field: 'title',
-        width: '40%',
+        width: '30%',
         minWidth: 200
       }, {
         field: 'author',
-        width: '20%',
+        width: '10%',
         minWidth: 200
       }, {
         name: 'year',
@@ -54,12 +54,17 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
         width: '10%',
         maxWidth: 100
       }, {
+        name: 'location',
+        field: 'location',
+        width: '20%',
+        minWidth: 200
+      }, {
         name: 'Citation Count',
         field: 'cite_count',
         width: '10%',
         minWidth: 200
       }, {
-        name: 'ISBN/DOI',
+        name: "ISBN",
         field: 'ISBN',
         width: '10%',
         minWidth: 200
@@ -67,8 +72,8 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
     ],
     rowTemplate: '<div ng-class="{active: grid.appScope.tableViewCtrl.activeRowEntity == row.entity}" ng-click="grid.appScope.tableViewCtrl.setActiveRow(row.entity)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>'
   };
-  $http.get('data/publication.json').success(function(data) {
-    return self.gridOptions.data = data.slice(0, 5);
+  $http.get($scope.globalCtrl.getServerAddr() + '?action=get_all_paper').success(function(data) {
+    return self.gridOptions.data = data;
   });
   return 0;
 });

@@ -28,7 +28,7 @@ angular.module 'sightApp'
 		$.post($scope.globalCtrl.getServerAddr(),{action:actionName,data:@entity},(res)->
 			console.log res
 			if isNewPaper then self.entity.pub_id = res.pub_id
-		);
+		, 'json');
 
 	@cancelEdit = ()->
 		@tempEntityDetail = null;
