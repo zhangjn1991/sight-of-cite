@@ -56,6 +56,9 @@ else if($_SERVER ['REQUEST_METHOD'] == 'POST') {	// INSERT
 			break;
 		case "add_tag_by_paper_id":
 			break;
+		case "delete_paper" :
+			$value = delete_paper( $_POST['data']);
+			break;
 		default :
 // 			$value = 'Error input.';
 			$value = $_POST;
