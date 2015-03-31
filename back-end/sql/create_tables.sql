@@ -58,11 +58,11 @@ CREATE TABLE Author_of(
 	PRIMARY KEY (pub_id, author_id)
 );
 
-CREATE TABLE Appear_at(
-	pub_id	INT(16),
-	loc_id	INT(16),
-	PRIMARY KEY (pub_id, loc_id)
-);
+-- CREATE TABLE Appear_at(
+-- 	pub_id	INT(16),
+-- 	loc_id	INT(16),
+-- 	PRIMARY KEY (pub_id, loc_id)
+-- );
 
 CREATE TABLE Tag_of(
 	pub_id INT(16),
