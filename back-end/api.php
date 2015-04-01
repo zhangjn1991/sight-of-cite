@@ -49,7 +49,7 @@ else if($_SERVER ['REQUEST_METHOD'] == 'POST') {	// INSERT
 		case "add_paper" :
 			$value = addPaper( $_POST ["data"]);	// call function
 			break;
-		case "updatePaper" :
+		case "update_paper" :
 			$value = updatePaper( $_POST ["data"]);
 			break;
 		case "add_note_by_paper_ids":

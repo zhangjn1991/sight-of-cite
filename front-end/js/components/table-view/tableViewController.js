@@ -45,8 +45,9 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
         width: '30%'
       }, {
         name: 'Authors',
-        field: 'authorNames',
-        width: '20%'
+        field: 'author',
+        width: '20%',
+        cellFilter: 'authorCellFilter'
       }, {
         name: 'year',
         field: 'pub_year',
@@ -69,9 +70,6 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
   };
   $http.get($scope.globalCtrl.getServerAddr() + '?action=get_all_paper').success(function(data) {
     console.log(data);
-    data.forEach(function(d) {
-      return d.authorNames = _.pluck(d.author, 'name').join(', ');
-    });
     return self.gridOptions.data = data;
   });
   return 0;

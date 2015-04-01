@@ -160,9 +160,11 @@ header {
     .info-bar .content-container p {
       margin: 0.5em; }
       .info-bar .content-container p span::after {
-        content: ", "; }
+        content: ', '; }
       .info-bar .content-container p span:last-of-type::after {
         content: none; }
+      .info-bar .content-container p span.author {
+        text-transform: capitalize; }
       .info-bar .content-container p a {
         color: inherit;
         text-decoration: none; }

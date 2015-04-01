@@ -33,7 +33,7 @@ angular.module "sightApp"
 		columnDefs: [
 			{field: 'pub_id', width: '2%', minWidth:100},
 			{field: 'title', width: '30%'},
-			{name: 'Authors', field: 'authorNames', width: '20%'},
+			{name: 'Authors', field: 'author', width: '20%', cellFilter:'authorCellFilter'},
 			# {name: 'year', field: 'pub_year', width: '10%',maxWidth:100 },
 			{name: 'year', field: 'pub_year', width: '10%'},
 			{name: 'location', field: 'location', width: '20%'}
@@ -45,8 +45,7 @@ angular.module "sightApp"
 	
 	# $http.get('data/publication.json').success (data)-> self.gridOptions.data = data.slice(0,5);
 	$http.get($scope.globalCtrl.getServerAddr()+'?action=get_all_paper').success (data)-> 
-		console.log data
-		data.forEach (d)->d.authorNames = _.pluck(d.author, 'name').join(', ')
+		console.log data		
 		self.gridOptions.data = data;
 
 

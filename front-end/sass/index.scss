@@ -290,11 +290,17 @@ header{
 
 		p{
 			margin:0.5em;
-			span::after{
-				content:', '
-			}
-			span:last-of-type::after{
-				content:none;
+			span{
+				&::after{
+					content:', ';
+				}
+				&:last-of-type::after{
+					content:none;
+				}
+
+				&.author{
+					text-transform:capitalize;
+				}
 			}
 
 			a{

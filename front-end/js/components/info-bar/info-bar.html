@@ -11,7 +11,7 @@
 			<section>
 				<h2>Authors</h2>
 				<p>
-					<span ng-repeat="author in infoBarCtrl.entity.author"><a href="">{{author.name}}</a></span>
+					<span class="author" ng-repeat="author in infoBarCtrl.entity.author"><a href="">{{author.name}}</a></span>
 				</p>
 			</section>
 			<section>
@@ -46,7 +46,7 @@
 			</section>
 			<section>
 				<h2>Authors</h2>
-				<textarea name="author" id="author" ng-model="infoBarCtrl.tempEntityDetail.author" placeholder="Author Names"></textarea>
+				<textarea name="author" id="author" ng-model="infoBarCtrl.tempEntityDetail.author" placeholder="Author Names" author-input-formatter></textarea>
 			</section>
 			<section>
 				<h2>Year</h2>
