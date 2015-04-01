@@ -290,6 +290,20 @@ header{
 
 		p{
 			margin:0.5em;
+			span::after{
+				content:', '
+			}
+			span:last-of-type::after{
+				content:none;
+			}
+
+			a{
+				color:inherit;
+				text-decoration:none;
+				&:hover{
+					text-decoration:underline;
+				}
+			}
 		}
 
 		h1{

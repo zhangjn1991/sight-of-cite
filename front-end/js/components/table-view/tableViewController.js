@@ -38,42 +38,40 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
     columnDefs: [
       {
         field: 'pub_id',
-        width: '10%',
-        minWidth: 200
+        width: '2%',
+        minWidth: 100
       }, {
         field: 'title',
-        width: '30%',
-        minWidth: 200
+        width: '30%'
       }, {
-        field: 'author',
-        width: '10%',
-        minWidth: 200
+        name: 'Authors',
+        field: 'authorNames',
+        width: '20%'
       }, {
         name: 'year',
         field: 'pub_year',
-        width: '10%',
-        maxWidth: 100
+        width: '10%'
       }, {
         name: 'location',
         field: 'location',
-        width: '20%',
-        minWidth: 200
+        width: '20%'
       }, {
         name: 'Citation Count',
         field: 'cite_count',
-        width: '10%',
-        minWidth: 200
+        width: '10%'
       }, {
         name: "ISBN",
         field: 'ISBN',
-        width: '10%',
-        minWidth: 200
+        width: '10%'
       }
     ],
     rowTemplate: '<div ng-class="{active: grid.appScope.tableViewCtrl.activeRowEntity == row.entity}" ng-click="grid.appScope.tableViewCtrl.setActiveRow(row.entity)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>'
   };
   $http.get($scope.globalCtrl.getServerAddr() + '?action=get_all_paper').success(function(data) {
     console.log(data);
+    data.forEach(function(d) {
+      return d.authorNames = _.pluck(d.author, 'name').join(', ');
+    });
     return self.gridOptions.data = data;
   });
   return 0;

@@ -10,7 +10,9 @@
 			<h1>{{infoBarCtrl.entity.title}}</h1>			
 			<section>
 				<h2>Authors</h2>
-				<p>{{infoBarCtrl.entity.author}}</p>
+				<p>
+					<span ng-repeat="author in infoBarCtrl.entity.author"><a href="">{{author.name}}</a></span>
+				</p>
 			</section>
 			<section>
 				<h2>Year</h2>

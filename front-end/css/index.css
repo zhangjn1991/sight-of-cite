@@ -159,6 +159,15 @@ header {
       color: rgba(96, 123, 141, 0.5); }
     .info-bar .content-container p {
       margin: 0.5em; }
+      .info-bar .content-container p span::after {
+        content: ", "; }
+      .info-bar .content-container p span:last-of-type::after {
+        content: none; }
+      .info-bar .content-container p a {
+        color: inherit;
+        text-decoration: none; }
+        .info-bar .content-container p a:hover {
+          text-decoration: underline; }
     .info-bar .content-container h1 {
       font-weight: inherit;
       font-size: 1.2em;
