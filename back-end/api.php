@@ -92,11 +92,12 @@ function getAllPaper() {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 		// $sql = "SELECT Publication.pub_id as pub_id, Publication.title as title, Publication.pub_year as pub_year, Publication.cite_count as cite_count, Publication.ISBN as ISBN, Author.name as author, Location.Name as location
-		// 		FROM Author JOIN (Publication JOIN Location ON Publication.loc_id = Location.loc_id) ON Author.author_id = Publication.author_id";
+		// 		FROM Author JOIN (Publication JOIN Location ON Publication.loc_id = Location.loc_id) ON Author.auth_id = Publication.auth_id";
 		
 		$sql = ("SELECT Publication.pub_id AS pub_id, 
 						Publication.pub_title AS title, 
-						GROUP_CONCAT(Author.auth_name SEPARATOR ',') AS author, 
+						GROUP_CONCAT(Author.auth_name SEPARATOR ',') AS authorNames, 
+						GROUP_CONCAT(Author.auth_id SEPARATOR ',') AS authorIds, 
 						Location.loc_name AS loc
 				FROM Author NATURAL JOIN Author_of NATURAL JOIN Publication NATURAL JOIN Location
 				GROUP BY Publication.pub_id");
@@ -104,6 +105,60 @@ function getAllPaper() {
 		$stmt = $conn->prepare ( $sql );
 		$stmt->execute ();
 		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
+
+
+		// re-formating the result into associative array
+		
+		// echo "eeee\n";
+		// foreach ($result[3] as $key => $value) {
+		// 	echo "\n key: ".$key;
+		// 	echo "\n value: ".$value;
+
+		// 	$auth = array();
+		// 	if ($key == 'author') {
+		// 		echo "\n  author~";
+		// 		$auth = explode(',', $value);
+		// 		foreach($auth as $num => $name){
+		// 			echo "\n  No. ".$num."  Name: ".$name;
+		// 		}
+		// 	}
+		// }
+		// echo "\neeee\n";
+
+		// print_r($result);
+
+		for ($resultCount = 0; $resultCount < sizeof($result); $resultCount++) {
+			
+			
+					$result[$resultCount]->authorNames = explode(',', $result[$resultCount]->authorNames);
+					$result[$resultCount]->authorIds = explode(',', $result[$resultCount]->authorIds);
+
+					// $authorAA = array();
+					// for ($i = 0; $i < sizeof($result[$resultCount]->authorNames); $i++) {
+					// 	$authorAA += array($result[$resultCount]->authorNames[$i] => $result[$resultCount]->authorIds[$i]);
+					// }
+					
+					// $result[$resultCount]->author = $authorAA;
+
+					// unset( $result[$resultCount]->authorNames);
+					// unset( $result[$resultCount]->authorIds);
+					// print_r($result[$resultCount]);
+
+					// $authorObj = new stdClass;
+					for ($i = 0; $i < sizeof($result[$resultCount]->authorNames); $i++) {
+						$authorObj = new stdClass;
+						$authorObj->name = $result[$resultCount]->authorNames[$i];
+						$authorObj->id = $result[$resultCount]->authorIds[$i];
+						$result[$resultCount]->author[$i] = $authorObj;
+					}
+					
+					unset( $result[$resultCount]->authorNames);
+					unset( $result[$resultCount]->authorIds);
+					echo "\n";
+					print_r($authorObj);
+
+		}
+
 		return $result;
 	} catch ( PDOException $e ) {
 		echo $sql . "<br>" . $e->getMessage ();
