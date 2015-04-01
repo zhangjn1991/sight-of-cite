@@ -200,31 +200,88 @@ function searchPaperByPub_id($pub_id) {
 	}
 }
 
-function searchPaperByTitle($title_piece) {
-	
-	if (isset ( $title_piece)) {
-	
+function searchPaperByTitle($query) {	
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
 		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-		$sql = "SELECT * FROM Publication WHERE title LIKE '%$title_piece%'";
-		$stmt = $conn->prepare ( $sql );
+		$sql = ("SELECT Publication.pub_id AS pub_id, 
+						Publication.pub_title AS title, 
+						Publication.pub_year AS pub_year,
+						Publication.pub_ISBN AS ISBN,
+						Publication.pub_cite_count AS cite_count,
+						GROUP_CONCAT(Author.auth_name SEPARATOR ',') AS authorNames, 
+						GROUP_CONCAT(Author.auth_id SEPARATOR ',') AS authorIds, 
+						Location.loc_name AS location
+				FROM Author NATURAL JOIN Author_of NATURAL JOIN Publication NATURAL JOIN Location
+				WHERE Publication.pub_title LIKE :query
+				GROUP BY Publication.pub_id"
+				);		
+
+		$stmt = $conn->prepare ( $sql );		
+		$query='%'.$query.'%';
+		$stmt->bindParam(":query", $query, PDO::PARAM_STR);
+
 		$stmt->execute ();
 		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
+
+		// re-formating the result into associative array
+
+		for ($resultCount = 0; $resultCount < sizeof($result); $resultCount++) {
+			
+			
+					$result[$resultCount]->authorNames = explode(',', $result[$resultCount]->authorNames);
+					$result[$resultCount]->authorIds = explode(',', $result[$resultCount]->authorIds);
+
+					for ($i = 0; $i < sizeof($result[$resultCount]->authorNames); $i++) {
+						$authorObj = new stdClass;
+						$authorObj->name = $result[$resultCount]->authorNames[$i];
+						$authorObj->id = $result[$resultCount]->authorIds[$i];
+						$result[$resultCount]->author[$i] = $authorObj;
+					}
+					
+					unset( $result[$resultCount]->authorNames);
+					unset( $result[$resultCount]->authorIds);
+
+		}
+
+		// print_r($result);
 		return $result;
 	} catch ( PDOException $e ) {
-		echo $sql . "<br>" . $e->getMessage ();
+		echo $e->getMessage ();
 	}
 
 	$conn = null;
 	
-	} else {
-		return 'Missing argument';
-	}
 }
+
+// function searchPaperByTitle($title_piece) {
+	
+// 	if (isset ( $title_piece)) {
+	
+// 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+		
+// 	try {
+// 		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+// 		// set the PDO error mode to exception
+// 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+// 		$sql = "SELECT * FROM Publication WHERE pub_title LIKE '%$title_piece%'";
+// 		$stmt = $conn->prepare ( $sql );
+// 		$stmt->execute ();
+// 		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
+// 		return $result;
+// 	} catch ( PDOException $e ) {
+// 		echo $sql . "<br>" . $e->getMessage ();
+// 	}
+
+// 	$conn = null;
+	
+// 	} else {
+// 		return 'Missing argument';
+// 	}
+// }
 
 function get_max_id($id_name, $table_name){
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;

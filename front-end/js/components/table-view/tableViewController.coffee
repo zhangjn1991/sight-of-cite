@@ -44,10 +44,12 @@ angular.module "sightApp"
 
 		rowTemplate: '<div ng-class="{active: grid.appScope.tableViewCtrl.activeRowEntity == row.entity}" ng-click="grid.appScope.tableViewCtrl.setActiveRow(row.entity)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>'
 	
+	@setData = (data)->@gridOptions.data = data
+
 	# $http.get('data/publication.json').success (data)-> self.gridOptions.data = data.slice(0,5);
 	$http.get($scope.globalCtrl.getServerAddr()+'?action=get_all_paper').success (data)-> 
 		console.log data		
-		self.gridOptions.data = data;
+		self.setData(data)
 
 
 
