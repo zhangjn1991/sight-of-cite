@@ -154,8 +154,8 @@ function getAllPaper() {
 					
 					unset( $result[$resultCount]->authorNames);
 					unset( $result[$resultCount]->authorIds);
-					echo "\n";
-					print_r($authorObj);
+					// echo "\n";
+					// print_r($authorObj);
 
 		}
 
