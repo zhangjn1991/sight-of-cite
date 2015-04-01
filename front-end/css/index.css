@@ -43,6 +43,8 @@ body {
     background-size: contain; }
   .button.add > div {
     background-image: url("../resources/add-icon.png"); }
+  .button.add-dark > div {
+    background-image: url("../resources/add-dark-icon.png"); }
   .button.edit > div {
     background-image: url("../resources/edit-icon.png"); }
   .button.cross > div {
@@ -335,7 +337,7 @@ header {
       .condition-container .add-container .add-button > div {
         width: 10px;
         height: 10px;
-        background: url("../resources/add-icon.png");
+        background: url("../resources/add-dark-icon.png");
         background-size: contain; }
     .condition-container .add-container span {
       font-size: 0.8em;
