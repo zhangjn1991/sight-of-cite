@@ -53,10 +53,6 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
         field: 'pub_year',
         width: '10%'
       }, {
-        name: 'location',
-        field: 'location',
-        width: '20%'
-      }, {
         name: 'Citation Count',
         field: 'cite_count',
         width: '10%'
@@ -64,6 +60,10 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
         name: "ISBN",
         field: 'ISBN',
         width: '10%'
+      }, {
+        name: 'location',
+        field: 'location',
+        width: '20%'
       }
     ],
     rowTemplate: '<div ng-class="{active: grid.appScope.tableViewCtrl.activeRowEntity == row.entity}" ng-click="grid.appScope.tableViewCtrl.setActiveRow(row.entity)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>'

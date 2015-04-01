@@ -147,14 +147,17 @@ function searchPaperByPub_id($pub_id) {
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 		$sql = ("SELECT Publication.pub_id AS pub_id, 
 						Publication.pub_title AS title, 
+						Publication.pub_year AS pub_year,
+						Publication.pub_ISBN AS ISBN,
+						Publication.pub_cite_count AS cite_count,
 						GROUP_CONCAT(Author.auth_name SEPARATOR ',') AS authorNames, 
 						GROUP_CONCAT(Author.auth_id SEPARATOR ',') AS authorIds, 
-						Location.loc_name AS loc
+						Location.loc_name AS location
 				FROM Author NATURAL JOIN Author_of NATURAL JOIN Publication NATURAL JOIN Location");
 
 		if ( $pub_id == "getAll") {	// get all paper
 			$sql = $sql." GROUP BY Publication.pub_id";
-			echo "\n".$sql."\n";
+			// echo "\n".$sql."\n";
 		} else {
 			$sql = $sql." WHERE Publication.pub_id = :pub_id";
 		}
@@ -184,7 +187,7 @@ function searchPaperByPub_id($pub_id) {
 
 		}
 
-		print_r($result);
+		// print_r($result);
 		return $result;
 	} catch ( PDOException $e ) {
 		echo $e->getMessage ();
@@ -245,9 +248,7 @@ function get_max_id($id_name, $table_name){
 	$conn = null;
 }
 
-// $_POST REQUESTs
-function addPaper($paperObj) {
-	
+function insertAuthorOf($pub_id, $auth_id){
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;      
 	
 	$NEW_PUB_ID = get_max_id("pub_id", "Publication") + 1;	
@@ -259,42 +260,80 @@ function addPaper($paperObj) {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		// $sql_pub = ("INSERT INTO Publication (pub_id, title, pub_year, cite_count, ISBN)
-		// 		VALUES (:pub_id, :title, :pub_year, :cite_count, :ISBN)");
+		$sql_author_of = ("INSERT INTO Author_of(pub_id, auth_id)
+				VALUES (:pub_id,:auth_id)");
 
-		// $stmt_pub = $conn->prepare ( $sql_pub );
-		// $stmt_pub->bindParam(":pub_id", $NEW_PUB_ID, PDO::PARAM_INT);		
-		// $stmt_pub->bindParam(":title", $paperObj['title'], PDO::PARAM_STR );
-		// $stmt_pub->bindParam(":pub_year", $paperObj['pub_year'], PDO::PARAM_INT);
-		// $stmt_pub->bindParam(":cite_count", $paperObj['cite_count'], PDO::PARAM_INT);
-		// $stmt_pub->bindParam(":ISBN", $paperObj['ISBN'], PDO::PARAM_STR );
-		// $stmt_pub->execute();
-		echo "addPaper \n";
+		$stmt_author_of = $conn->prepare ( $sql_author_of );
+		$stmt_author_of->bindParam(":pub_id", $pub_id, PDO::PARAM_INT);		
+		$stmt_author_of->bindParam(":auth_id", $auth_id, PDO::PARAM_INT);			
+		$stmt_author_of->execute();
+	
+		return;
+	} catch ( PDOException $e ) {
+		echo $e->getMessage ();
+	}
+	
+	$conn = null;	
+}
+
+// $_POST REQUESTs
+function addPaper($paperObj) {
+	
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;      
+	
+	$NEW_PUB_ID = get_max_id("pub_id", "Publication") + 1;	
+	echo "NEW ID";
+	echo $NEW_PUB_ID;
+	insertAuthorOf($NEW_PUB_ID,1);
+	// print_r(get_max_id("pub_id", "Publication"));
+
+	try {
+		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+		// set the PDO error mode to exception
+		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$sql_pub = ("INSERT INTO Publication (pub_id, pub_title, pub_year, pub_cite_count, pub_ISBN)
+				VALUES (:pub_id, :title, :pub_year, :cite_count, :ISBN)");
+
+		$stmt_pub = $conn->prepare ( $sql_pub );
+		$stmt_pub->bindParam(":pub_id", $NEW_PUB_ID, PDO::PARAM_INT);		
+		$stmt_pub->bindParam(":title", $paperObj['title'], PDO::PARAM_STR );
+		$stmt_pub->bindParam(":pub_year", $paperObj['pub_year'], PDO::PARAM_INT);
+		$stmt_pub->bindParam(":cite_count", $paperObj['cite_count'], PDO::PARAM_INT);
+		$stmt_pub->bindParam(":ISBN", $paperObj['ISBN'], PDO::PARAM_STR );
+		$stmt_pub->execute();
+
+
+
+
+		// echo "addPaper \n";
 		// print_r($paperObj['author']);
-		foreach ($paperObj['author'] as $number => $pair) {
-			foreach ($pair as $key => $auth_name) {
-				$sql_auth_find = ("SELECT auth_id FROM Author WHERE auth_name = :auth_name");
-				$stmt_auth_find = $conn->prepare( $sql_auth_find );
-				$stmt_auth_find->bindParam(":auth_name", $auth_name, PDO::PARAM_STR);
-				$stmt_auth_find->execute();
-				// $result_auth_find = $stmt_auth_find->fetchAll ( PDO::FETCH_CLASS );
-				$result_auth_find = $stmt_auth_find->fetch ( PDO::FETCH_ASSOC );
+		// foreach ($paperObj['author'] as $number => $pair) {
+		// 	foreach ($pair as $key => $auth_name) {
+		// 		$sql_auth_find = ("SELECT auth_id FROM Author WHERE auth_name = :auth_name");
+		// 		$stmt_auth_find = $conn->prepare( $sql_auth_find );
+		// 		$stmt_auth_find->bindParam(":auth_name", $auth_name, PDO::PARAM_STR);
+		// 		$stmt_auth_find->execute();
+		// 		// $result_auth_find = $stmt_auth_find->fetchAll ( PDO::FETCH_CLASS );
+		// 		$result_auth_find = $stmt_auth_find->fetch ( PDO::FETCH_ASSOC );
 
-				// New Author
-				if ( empty($result_auth_find) ) {
-					echo "\n add author: ".$auth_name;
-					$NEW_AUTH_ID = get_max_id( "auth_id", "Author" ) + 1;
-					echo "\n new auth id: ".$NEW_AUTH_ID;
-					$sql_auth_add = ("INSERT INTO Author (auth_id, auth_name) VALUES (:auth_id, :auth_name)");
-					$stmt_auth_add = $conn->prepare ( $sql_auth_add );
-					$stmt_auth_add->bindParam(":auth_id", $NEW_AUTH_ID, PDO::PARAM_INT);
-					$stmt_auth_add->bindParam(":auth_name", $auth_name, PDO::PARAM_STR);
-					$stmt_auth_add->execute();
-				}
-			}
-		}
+		// 		// New Author
+		// 		if ( empty($result_auth_find) ) {
+		// 			// // echo "\n add author: ".$auth_name;
+		// 			$NEW_AUTH_ID = get_max_id( "auth_id", "Author" ) + 1;
+		// 			// echo "\n new auth id: ".$NEW_AUTH_ID;
+		// 			$sql_auth_add = ("INSERT INTO Author (auth_id, auth_name) VALUES (:auth_id, :auth_name)");
+		// 			$stmt_auth_add = $conn->prepare ( $sql_auth_add );
+		// 			$stmt_auth_add->bindParam(":auth_id", $NEW_AUTH_ID, PDO::PARAM_INT);
+		// 			$stmt_auth_add->bindParam(":auth_name", $auth_name, PDO::PARAM_STR);
+		// 			$stmt_auth_add->execute();
+
+
+		// 		}
+		// 	}
+		// }
 		// print_r($paperObj);
-		echo "\n";
+		// echo "\n";
 
 		return array("pub_id" => $NEW_PUB_ID);
 	} catch ( PDOException $e ) {
@@ -316,10 +355,10 @@ function updatePaper($paperObj) {
 		
 		$sql = "UPDATE Publication
 				SET 
-					title = :title,
+					pub_title = :title,
 					pub_year = :pub_year,
-					cite_count = :cite_count,
-					ISBN = :ISBN
+					pub_cite_count = :cite_count,
+					pub_ISBN = :ISBN
 				WHERE pub_id = :pub_id 
 				";
 		$stmt = $conn->prepare($sql);
