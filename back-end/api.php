@@ -144,7 +144,6 @@ function getAllPaper() {
 					// unset( $result[$resultCount]->authorIds);
 					// print_r($result[$resultCount]);
 
-					// $authorObj = new stdClass;
 					for ($i = 0; $i < sizeof($result[$resultCount]->authorNames); $i++) {
 						$authorObj = new stdClass;
 						$authorObj->name = $result[$resultCount]->authorNames[$i];
