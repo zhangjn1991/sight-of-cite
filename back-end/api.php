@@ -333,9 +333,7 @@ function addPaper($paperObj) {
 	
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;      
 	
-	$NEW_PUB_ID = getMaxId("pub_id", "Publication") + 1;	
-
-	insertAuthorOf($NEW_PUB_ID,1);
+	$NEW_PUB_ID = getMaxId("pub_id", "Publication") + 1;
 
 	try {
 		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
@@ -371,8 +369,8 @@ function addPaper($paperObj) {
 					$stmtAuthAdd->bindParam(":auth_name", $auth_name, PDO::PARAM_STR);
 					$stmtAuthAdd->execute();
 
-					insertAuthorOf($NEW_PUB_ID, $NEW_AUTH_ID);
-				} else {
+					insertAuthorOf($NEW_PUB_ID, $NEW_AUTH_ID);	// update Author_of
+				} else {						// author in record -> add to Author_of directly
 					insertAuthorOf($NEW_PUB_ID, $resultAuthFind[auth_id]);
 				}
 			}
