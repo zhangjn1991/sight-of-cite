@@ -376,9 +376,6 @@ function addPaper($paperObj) {
 			}
 		}
 
-		print_r($paperObj);
-		echo "\n";
-
 		return array("pub_id" => $NEW_PUB_ID);
 	} catch ( PDOException $e ) {
 		echo $e->getMessage ();
