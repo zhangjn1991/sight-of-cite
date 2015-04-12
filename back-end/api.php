@@ -24,11 +24,10 @@ if ($_SERVER ['REQUEST_METHOD'] == 'GET') {		// QUERY
 		// call function 'get_all' or 'get_entry_by_id' according to the input
 		switch ($_GET ["action"]) :
 			case "get_all_paper" : // get the all the content
-				// $value = getAllPaper ();
-				$value = searchPaperByPub_id ("getAll");
+				$value = getPaperByPubId ("getAll");
 				break;
 			case "search_by_id" :
-				$value = searchPaperByPub_id ( $_GET ["id"] );
+				$value = getPaperByPubId ( $_GET ["id"] );
 				break;
 			case "search_by_title" :
 				$value = searchPaperByTitle ($_GET ["title"]);		
@@ -58,7 +57,7 @@ else if($_SERVER ['REQUEST_METHOD'] == 'POST') {	// INSERT
 		case "add_tag_by_paper_id":
 			break;
 		case "delete_paper" :
-			$value = deletePaper( $_POST['data']);
+			$value = deletePaperByPaperId( $_POST['data']);
 			break;
 		default :
 			$value = 'Error input.';
@@ -76,7 +75,7 @@ else if ($_SERVER ['REQUEST_METHOD'] == 'PUT') {	// UPDATE
 }
 else if ($_SERVER ['REQUEST_METHOD'] == 'DELETE') {	// DELETE
 	parse_str(file_get_contents("php://input"), $post_vars);
-	$value = deletePaper( $post_vars['data']);
+	$value = deletePaperByPaperId( $post_vars['data']);
 	exit ( json_encode ( $value ) );
 }
 
@@ -133,70 +132,6 @@ function getAllPaper() {
 	$conn = null;
 }
 
-function searchPaperByPub_id($pub_id) {
-	
-	if (isset ( $pub_id )) {	//input validation
-		
-	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
-		
-	try {
-		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
-		// set the PDO error mode to exception
-		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-		$sql = ("SELECT Publication.pub_id AS pub_id, 
-						Publication.pub_title AS title, 
-						Publication.pub_year AS pub_year,
-						Publication.pub_ISBN AS ISBN,
-						Publication.pub_cite_count AS cite_count,
-						GROUP_CONCAT(Author.auth_name SEPARATOR ',') AS authorNames, 
-						GROUP_CONCAT(Author.auth_id SEPARATOR ',') AS authorIds, 
-						Location.loc_name AS location
-				FROM Author NATURAL JOIN Author_of NATURAL JOIN Publication NATURAL JOIN Location");
-
-		if ( $pub_id == "getAll") {	// get all paper
-			$sql = $sql." GROUP BY Publication.pub_id";
-			// echo "\n".$sql."\n";
-		} else {
-			$sql = $sql." WHERE Publication.pub_id = :pub_id";
-		}
-
-		$stmt = $conn->prepare ( $sql );
-		$stmt->bindParam(":pub_id", $pub_id, PDO::PARAM_INT);
-		$stmt->execute ();
-		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
-
-		// re-formating the result into associative array
-
-		for ($resultCount = 0; $resultCount < sizeof($result); $resultCount++) {
-			
-			
-					$result[$resultCount]->authorNames = explode(',', $result[$resultCount]->authorNames);
-					$result[$resultCount]->authorIds = explode(',', $result[$resultCount]->authorIds);
-
-					for ($i = 0; $i < sizeof($result[$resultCount]->authorNames); $i++) {
-						$authorObj = new stdClass;
-						$authorObj->name = $result[$resultCount]->authorNames[$i];
-						$authorObj->id = $result[$resultCount]->authorIds[$i];
-						$result[$resultCount]->author[$i] = $authorObj;
-					}
-					
-					unset( $result[$resultCount]->authorNames);
-					unset( $result[$resultCount]->authorIds);
-
-		}
-
-		return $result;
-	} catch ( PDOException $e ) {
-		echo $e->getMessage ();
-	}
-
-	$conn = null;
-	
-	} else {
-		return 'Missing argument.';
-	}
-}
-
 function searchPaperByTitle($query) {	
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
@@ -225,7 +160,6 @@ function searchPaperByTitle($query) {
 		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
 
 		// re-formating the result into associative array
-
 		for ($resultCount = 0; $resultCount < sizeof($result); $resultCount++) {
 			
 			
@@ -244,7 +178,6 @@ function searchPaperByTitle($query) {
 
 		}
 
-		// print_r($result);
 		return $result;
 	} catch ( PDOException $e ) {
 		echo $e->getMessage ();
@@ -254,81 +187,11 @@ function searchPaperByTitle($query) {
 	
 }
 
-// function searchPaperByTitle($title_piece) {
-	
-// 	if (isset ( $title_piece)) {
-	
-// 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
-		
-// 	try {
-// 		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
-// 		// set the PDO error mode to exception
-// 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-// 		$sql = "SELECT * FROM Publication WHERE pub_title LIKE '%$title_piece%'";
-// 		$stmt = $conn->prepare ( $sql );
-// 		$stmt->execute ();
-// 		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
-// 		return $result;
-// 	} catch ( PDOException $e ) {
-// 		echo $sql . "<br>" . $e->getMessage ();
-// 	}
+////////////////////////////////
+//      API Functions        //
+//////////////////////////////
 
-// 	$conn = null;
-	
-// 	} else {
-// 		return 'Missing argument';
-// 	}
-// }
-
-function getMaxId($id_name, $table_name){
-	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
-		
-	try {
-		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
-		// set the PDO error mode to exception
-		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-		$sql = ("SELECT max($id_name) AS max_id FROM $table_name");
-		$stmt = $conn->prepare ( $sql );
-		$stmt->execute ();
-		$result = $stmt->fetch( PDO::FETCH_ASSOC );	
-
-		return $result['max_id'];
-
-	} catch ( PDOException $e ) {
-		echo $e->getMessage ();
-	}
-
-	$conn = null;
-}
-
-function insertAuthorOf($pub_id, $auth_id){
-	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;      
-	
-	$NEW_PUB_ID = getMaxId("pub_id", "Publication") + 1;	
-
-	try {
-		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
-		// set the PDO error mode to exception
-		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-		$sql_author_of = ("INSERT INTO Author_of(pub_id, auth_id)
-				VALUES (:pub_id,:auth_id)");
-
-		$stmtAuthA_of = $conn->prepare ( $sql_author_of );
-		$stmtAuthA_of->bindParam(":pub_id", $pub_id, PDO::PARAM_INT);		
-		$stmtAuthA_of->bindParam(":auth_id", $auth_id, PDO::PARAM_INT);			
-		$stmtAuthA_of->execute();
-	
-		return;
-	} catch ( PDOException $e ) {
-		echo $e->getMessage ();
-	}
-	
-	$conn = null;	
-}
-
-// $_POST REQUESTs
+// API 01
 function addPaper($paperObj) {
 	
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;      
@@ -351,32 +214,26 @@ function addPaper($paperObj) {
 		$stmtPub->bindParam(":ISBN", $paperObj['ISBN'], PDO::PARAM_STR );
 		$stmtPub->execute();
 
-		foreach ($paperObj['author'] as $number => $pair) {
+		foreach ($paperObj['author'] as $number => $pair) {	// Check & Update Author, Author_of
 			foreach ($pair as $key => $auth_name) {
-				$sqlAuthFind = ("SELECT auth_id FROM Author WHERE auth_name = :auth_name");
-				$stmtAuthFind = $conn->prepare( $sqlAuthFind );
-				$stmtAuthFind->bindParam(":auth_name", $auth_name, PDO::PARAM_STR);
-				$stmtAuthFind->execute();
-				$resultAuthFind = $stmtAuthFind->fetch ( PDO::FETCH_ASSOC );
-
-				if ( empty($resultAuthFind) ) {	// find new author -> add to Author
-					
-					$NEW_AUTH_ID = getMaxId( "auth_id", "Author" ) + 1;
-					
-					$sqlAuthAdd = ("INSERT INTO Author (auth_id, auth_name) VALUES (:auth_id, :auth_name)");
-					$stmtAuthAdd = $conn->prepare ( $sqlAuthAdd );
-					$stmtAuthAdd->bindParam(":auth_id", $NEW_AUTH_ID, PDO::PARAM_INT);
-					$stmtAuthAdd->bindParam(":auth_name", $auth_name, PDO::PARAM_STR);
-					$stmtAuthAdd->execute();
-
-					insertAuthorOf($NEW_PUB_ID, $NEW_AUTH_ID);	// update Author_of
+				$findAuthId = checkAuthor( $auth_name );
+				if ( empty($findAuthId) ) {	// new author found -> add to Author					
+					$NEW_AUTH_ID = insertAuthor( $auth_name );
+					insertAuthorOf($NEW_PUB_ID, $NEW_AUTH_ID);	// add to Author_of
 				} else {						// author in record -> add to Author_of directly
-					insertAuthorOf($NEW_PUB_ID, $resultAuthFind[auth_id]);
+					insertAuthorOf($NEW_PUB_ID, $findAuthId);
 				}
 			}
 		}
 
+		foreach ($paperObj['location'] as $number => $pair) {
+			foreach ($pair as $key => $loc_name) {
+				
+			}
+		}
+
 		return array("pub_id" => $NEW_PUB_ID);
+
 	} catch ( PDOException $e ) {
 		echo $e->getMessage ();
 	}
@@ -384,6 +241,7 @@ function addPaper($paperObj) {
 	$conn = null;
 }
 
+// API 02
 function updatePaper($paperObj) {
 	
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
@@ -417,7 +275,8 @@ function updatePaper($paperObj) {
 	$conn = null;
 }
 
-function deletePaper($paperObj) {
+// API 03
+function deletePaperByPaperId($paperObj) {
 
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 	
@@ -441,4 +300,212 @@ function deletePaper($paperObj) {
 	
 	$conn = null;
 }
+
+// API 04
+function searchPaperByAttrs($paperObj) {
+
+}
+
+// API 05
+function addNoteByPaperIds($paperObj) {
+
+}
+// API 06
+function updateNoteByPaperIds($paperObj) {
+
+}
+
+// API 07
+function deleteNoteByPaperIds($paperObj) {
+
+}
+
+// API 08
+function getNoteByPaperIds($paperObj) {
+
+}
+
+// API 09
+function getPaperByPubId($pub_id) {
+	
+	if (isset ( $pub_id )) {	//input validation
+		
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+		
+	try {
+		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+		// set the PDO error mode to exception
+		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+		$sql = ("SELECT Publication.pub_id AS pub_id, 
+						Publication.pub_title AS title, 
+						Publication.pub_year AS pub_year,
+						Publication.pub_ISBN AS ISBN,
+						Publication.pub_cite_count AS cite_count,
+						GROUP_CONCAT(Author.auth_name SEPARATOR ',') AS authorNames, 
+						GROUP_CONCAT(Author.auth_id SEPARATOR ',') AS authorIds, 
+						Location.loc_name AS location
+				FROM Author NATURAL JOIN Author_of NATURAL JOIN Publication NATURAL JOIN Location");
+
+		if ( $pub_id == "getAll") {	// SPECIAL CASE: get all paper
+			$sql = $sql." GROUP BY Publication.pub_id";
+		} else {
+			$sql = $sql." WHERE Publication.pub_id = :pub_id";
+		}
+
+		$stmt = $conn->prepare ( $sql );
+		$stmt->bindParam(":pub_id", $pub_id, PDO::PARAM_INT);
+		$stmt->execute ();
+		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
+
+		// re-formating the result into associative array
+		for ($resultCount = 0; $resultCount < sizeof($result); $resultCount++) {
+			
+			
+					$result[$resultCount]->authorNames = explode(',', $result[$resultCount]->authorNames);
+					$result[$resultCount]->authorIds = explode(',', $result[$resultCount]->authorIds);
+
+					for ($i = 0; $i < sizeof($result[$resultCount]->authorNames); $i++) {
+						$authorObj = new stdClass;
+						$authorObj->name = $result[$resultCount]->authorNames[$i];
+						$authorObj->id = $result[$resultCount]->authorIds[$i];
+						$result[$resultCount]->author[$i] = $authorObj;
+					}
+					
+					unset( $result[$resultCount]->authorNames);
+					unset( $result[$resultCount]->authorIds);
+
+		}
+
+		return $result;
+
+	} catch ( PDOException $e ) {
+		echo $e->getMessage ();
+	}
+
+	$conn = null;
+	
+	} else {
+		return 'Missing argument.';
+	}
+}
+
+// API 10
+function addTagByPaperId($paperObj) {
+
+}
+
+// API 11
+function deleteTagByPaperId($paperObj) {
+
+}
+
+// API 12
+function deleteTagByTagId($tagId) {
+
+}
+
+////////////////////////////////
+//   Peripheral Functions    //
+//////////////////////////////
+function getMaxId($idName, $tableName) {
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+		
+	try {
+		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+		// set the PDO error mode to exception
+		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$sql = ("SELECT max($idName) AS maxId FROM $tableName");
+		$stmt = $conn->prepare ( $sql );
+		$stmt->execute ();
+		$result = $stmt->fetch( PDO::FETCH_ASSOC );	
+
+		return $result['maxId'];
+
+	} catch ( PDOException $e ) {
+		echo $e->getMessage ();
+	}
+
+	$conn = null;
+}
+
+function checkAuthor( $auth_name ) {	// Check the passed auth_name, if new->empty, existed->auth_id
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+		
+	try {
+		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+		// set the PDO error mode to exception
+		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$sqlAuthFind = ("SELECT auth_id FROM Author WHERE auth_name = :auth_name");
+
+		$stmtAuthFind = $conn->prepare( $sqlAuthFind );
+		$stmtAuthFind->bindParam(":auth_name", $auth_name, PDO::PARAM_STR);
+		$stmtAuthFind->execute();
+		$resultAuthFind = $stmtAuthFind->fetch ( PDO::FETCH_ASSOC );
+
+		if ( empty($resultAuthFind) ) {	// it's new
+			return;
+		} else {	// it's existed
+			return $resultAuthFind[auth_id];
+		}
+
+	} catch ( PDOException $e ) {
+		echo $e->getMessage ();
+	}
+
+	$conn = null;
+}
+
+function insertAuthor( $auth_name ) {
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+
+	$NEW_AUTH_ID = getMaxId( "auth_id", "Author" ) + 1;
+	
+	try {
+		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+		// set the PDO error mode to exception
+		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$sqlAddAuthor = ("INSERT INTO Author (auth_id, auth_name) VALUES (:auth_id, :auth_name)");
+
+		$stmtAddAuthor = $conn->prepare ( $sqlAddAuthor );
+		$stmtAddAuthor->bindParam(":auth_id", $NEW_AUTH_ID, PDO::PARAM_INT);
+		$stmtAddAuthor->bindParam(":auth_name", $auth_name, PDO::PARAM_STR);
+		$stmtAddAuthor->execute();
+
+		return $NEW_AUTH_ID;
+
+	} catch ( PDOException $e ) {
+		echo $e->getMessage ();
+	}
+
+	$conn = null;
+}
+
+function insertAuthorOf( $pub_id, $auth_id ) {
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;      
+	
+	$NEW_PUB_ID = getMaxId("pub_id", "Publication") + 1;	
+
+	try {
+		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+		// set the PDO error mode to exception
+		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$sqlAddAuthorOf = ("INSERT INTO Author_of(pub_id, auth_id) VALUES (:pub_id,:auth_id)");
+
+		$stmtAddAuthorOf = $conn->prepare ( $sqlAddAuthorOf );
+		$stmtAddAuthorOf->bindParam(":pub_id", $pub_id, PDO::PARAM_INT);		
+		$stmtAddAuthorOf->bindParam(":auth_id", $auth_id, PDO::PARAM_INT);			
+		$stmtAddAuthorOf->execute();
+	
+		return;
+	} catch ( PDOException $e ) {
+		echo $e->getMessage ();
+	}
+	
+	$conn = null;	
+}
+
 ?>
