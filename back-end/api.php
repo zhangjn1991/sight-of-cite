@@ -54,10 +54,11 @@ else if($_SERVER ['REQUEST_METHOD'] == 'POST') {	// INSERT
 			break;
 		case "update_note_by_paper_ids":
 			break;
-		case "add_tag_by_paper_id":
-			break;
 		case "delete_paper" :
 			$value = deletePaperByPaperId( $_POST['data']);
+			break;
+		case "add_tag_by_paper_id":
+			$value = addTagByPaperId( $_POST['data']['pub_id'], $_POST['data']['tag_content'] );
 			break;
 		case "delete_tag_by_paper_id" :
 			$value = deleteTagByPaperId( $_POST['data']['pub_id'], $_POST['data']['tag_id'] );
@@ -67,7 +68,6 @@ else if($_SERVER ['REQUEST_METHOD'] == 'POST') {	// INSERT
 			break;
 
 		case "test" :
-			// $value = getTagIdByPubId( $_POST['data']['pub_id'], $_POST['data']['tag_id'] );
 			$value = checkTagOf( $_POST['tag_id'] );
 			break;
 		default :
@@ -418,7 +418,7 @@ function getPaperByPubId($pub_id) {
 }
 
 // API 10
-function addTagByPaperId($paperObj) {
+function addTagByPaperId( $pubId, $tagContent ) {
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
@@ -426,8 +426,21 @@ function addTagByPaperId($paperObj) {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		# content
+		$tagId = checkTag( $tagContent );
 
+		if( $tagId ) {	// if it's a new tag
+			$tagId = getMaxId('tag_id', 'Tag');
+			insertTag($tagId, $tagContent);
+		}
+
+		$sql = ("INSERT INTO Tag_of (pub_id, tag_id) VALUES (:pub_id, :tag_id)");
+
+		$stmt = $conn->prepare( $sql );
+		$stmt->bindParam(":pub_id", $pubId, PDO::PARAM_INT);
+		$stmt->bindParam(":tag_id", $tagId, PDO::PARAM_INT);
+		$stmt->execute();
+
+		return true;
 
 	} catch ( PDOException $e ) {
 		echo $e->getMessage ();
@@ -603,7 +616,35 @@ function insertAuthorOf( $pub_id, $auth_id ) {
 	$conn = null;	
 }
 
-function checkTagOf( $tagId ) {		// Check the passed tag_id, if new->empty, existed->paper_id(s)
+function checkTag( $tagContent ) {		// Check the passed STRING tag_content, if new->true, existed->tag_id
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+		
+	try {
+		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+		// set the PDO error mode to exception
+		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$sql = ("SELECT tag_if FROM Tag WHERE tag_content = :tag_content");
+
+		$stmt = $conn->prepare( $sql );
+		$stmt->bindParam(":tag_content", $tagContent, PDO::PARAM_STR);
+		$stmt->execute();
+		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
+
+		if ( empty($result) ) {	// no records in Tag_of
+			return true;
+		} else {	// this tag still has records in Tag_of
+			return $result;
+		}
+
+	} catch ( PDOException $e ) {
+		echo $e->getMessage ();
+	}
+
+	$conn = null;
+}
+
+function checkTagOf( $tagId ) {		// Check the passed tag_id, if new->true, existed->paper_id(s)
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
@@ -617,15 +658,6 @@ function checkTagOf( $tagId ) {		// Check the passed tag_id, if new->empty, exis
 		$stmt->bindParam(":tag_id", $tagId, PDO::PARAM_INT);
 		$stmt->execute();
 		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
-
-		// echo "\n".$result[0]->pub_id."\n";
-		echo sizeof($result)."\n";
-		for ($i = 0; $i < sizeof($result); $i++) {
-			// foreach ($result[$i] as $key => $value) {
-			// 	echo $value."\n";
-			// }
-			echo $result[$i]->pub_id."\n";
-		}
 
 		if ( empty($result) ) {	// no records in Tag_of
 			return true;
@@ -688,7 +720,7 @@ function getTagIdByPubId ($pubId, $tagId) {
 	$conn = null;	
 }
 
-function addTag($tagId) {
+function insertTag( $tagId, $tagContent ) {
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
@@ -696,18 +728,13 @@ function addTag($tagId) {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		$testContent = "test tag content";
-		$testPub = 101;
-		$sql = ( "INSERT INTO Tag (tag_id, tag_content) VALUES (:tag_id, :tag_content); 
-			INSERT INTO Tag_of (tag_id, pub_id) VALUES (:tag_id, :pub_id)" );
+		$sql = ( "INSERT INTO Tag (tag_id, tag_content) VALUES (:tag_id, :tag_content)" );
 		
 		$stmt = $conn->prepare($sql);
 		$stmt->bindParam(":tag_id", $tagId, PDO::PARAM_INT);
-		$stmt->bindParam("tag_content", $testContent, PDO::PARAM_STR);
-		$stmt->bindParam("pub_id", $testPub, PDO::PARAM_INT);
+		$stmt->bindParam("tag_content", $tagContent, PDO::PARAM_STR);
 		$stmt->execute();
 
-		echo "addTag succeed. \n";
 		return true;
 
 	} catch ( PDOException $e ) {
