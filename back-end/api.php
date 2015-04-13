@@ -31,6 +31,12 @@ if ($_SERVER ['REQUEST_METHOD'] == 'GET') {		// QUERY
 			case "search_by_title" :
 				$value = searchPaperByTitle ($_GET ["title"]);		
 				break;
+			case "search_paper_by_attrs": 	// API 04
+				break;
+			case "get_note_by_paper_ids":	// API 08
+				break;
+			case "get_paper_by_ids": 	// API 09
+				break;
 			default :
 				$value = 'Error input.';
 		endswitch;
@@ -44,26 +50,31 @@ else if($_SERVER ['REQUEST_METHOD'] == 'POST') {	// INSERT
 		$value = 'An error occurd.';
 
 		switch ($_POST ["action"]) :
-		case "add_paper" :
+		case "add_paper" :	// API 01
 			$value = addPaper( $_POST ["data"] );
 			break;
-		case "update_paper" :
+		case "update_paper" :	// API 02
 			$value = updatePaper( $_POST ["data"]);
 			break;
-		case "add_note_by_paper_ids":
+		case "delete_paper" :	// API 03
+			$value = deletePaperByPaperId( $_POST['data']['pub_id']);
 			break;
-		case "update_note_by_paper_ids":
+		case "add_note_by_paper_ids":	// API 05
+			$value = addNoteByPaperIds( $_POST['data']['pub_id_1'], $_POST['data']['pub_id_2'], $_POST['data']['note_content'] );
 			break;
-		case "delete_paper" :
-			$value = deletePaperByPaperId( $_POST['data']);
+		case "update_note_by_paper_ids":	// API 06
+			$value = updateNoteByPaperIds( $_POST['data']['pub_id_1'], $_POST['data']['pub_id_2'], $_POST['data']['note_content'], $_POST['data']['rating'], $_POST['data']['date']);
 			break;
-		case "add_tag_by_paper_id":
+		case "delete_note_by_paper_ids": 	// API 07
+			$value = deleteNoteByPaperIds( $_POST['data']['pub_id_1'], $_POST['data']['pub_id_2'] );
+			break;
+		case "add_tag_by_paper_id":	// API 10
 			$value = addTagByPaperId( $_POST['data']['pub_id'], $_POST['data']['tag_content'] );
 			break;
-		case "delete_tag_by_paper_id" :
+		case "delete_tag_by_paper_id" :	// API 11
 			$value = deleteTagByPaperId( $_POST['data']['pub_id'], $_POST['data']['tag_id'] );
 			break;
-		case "delete_tab_by_tag_id" :
+		case "delete_tab_by_tag_id" :	// API 12
 			$value = deleteTagByTagId( $_POST['tag_id'] );
 			break;
 
@@ -76,7 +87,6 @@ else if($_SERVER ['REQUEST_METHOD'] == 'POST') {	// INSERT
 		
 		exit ( json_encode ( $value ) );
 	}
-
 }
 else if ($_SERVER ['REQUEST_METHOD'] == 'PUT') {	// UPDATE
 	parse_str(file_get_contents("php://input"), $post_vars);
@@ -85,7 +95,7 @@ else if ($_SERVER ['REQUEST_METHOD'] == 'PUT') {	// UPDATE
 }
 else if ($_SERVER ['REQUEST_METHOD'] == 'DELETE') {	// DELETE
 	parse_str(file_get_contents("php://input"), $post_vars);
-	$value = deletePaperByPaperId( $post_vars['data']);
+	$value = deletePaperByPaperId( $post_vars['data']['pub_id']);
 	exit ( json_encode ( $value ) );
 }
 
@@ -232,7 +242,7 @@ function updatePaper($paperObj) {
 }
 
 // API 03
-function deletePaperByPaperId($paperObj) {
+function deletePaperByPaperId( $pubId ) {
 
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 	
@@ -246,7 +256,7 @@ function deletePaperByPaperId($paperObj) {
 				);
 
 		$stmt = $conn->prepare( $sql );
-		$stmt->bindParam(":pub_id", $paperObj['pub_id'], PDO::PARAM_INT);
+		$stmt->bindParam(":pub_id", $pubId, PDO::PARAM_INT);
 		$stmt->execute ();
 		return 1;
 
@@ -277,7 +287,7 @@ function searchPaperByAttrs($paperObj) {
 }
 
 // API 05
-function addNoteByPaperIds($paperObj) {
+function addNoteByPaperIds( $citerId, $citeeId, $noteContent ) {	// return note_id if succeed, else null
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
@@ -285,8 +295,27 @@ function addNoteByPaperIds($paperObj) {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		# content
+		$noteId = checkCite( $citerId, $citeeId );
+		
+		if ($noteId) {	// no record -> insert entry into Cite, Note
+			$noteId = getMaxId('note_id', 'Note') + 1;
 
+			$sql = ( "INSERT INTO Cite (citer_id, citee_id, note_id) 
+						VALUES (:citer_id, :citee_id, :note_id); 
+						INSERT INTO Note (note_id, note_content)
+						VALUES (:note_id, :note_content)" );
+
+			$stmt = $conn->prepare( $sql );
+			$stmt->bindParam(":citer_id", $citerId, PDO::PARAM_INT);
+			$stmt->bindParam(":citee_id", $citeeId, PDO::PARAM_INT);
+			$stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
+			$stmt->bindParam(":note_content", $noteContent, PDO::PARAM_STR);
+			$stmt->execute();
+
+			return $noteId;
+		} else {	// has record -> return the current note_id
+			return $noteId;
+		}
 
 	} catch ( PDOException $e ) {
 		echo $e->getMessage ();
@@ -295,7 +324,7 @@ function addNoteByPaperIds($paperObj) {
 	$conn = null;
 }
 // API 06
-function updateNoteByPaperIds($paperObj) {
+function updateNoteByPaperIds( $citerId, $citeeId, $noteContent, $noteRating, $noteDate ) {	// return updated note_id, if note exist return null
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
@@ -303,8 +332,27 @@ function updateNoteByPaperIds($paperObj) {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		# content
+		$noteId = checkCite( $citerId, $citeeId );
 
+		if ( $noteId ) {	// the aimed note doesn't exist
+			return null;
+		}
+
+		$sql = ( "UPDATE Note
+					SET 
+						note_content = :note_content,
+						note_rating = :note_rating,
+						note_date = :note_date
+					WHERE note_id = :note_id" );
+
+		$stmt = $conn->prepare( $sql );
+		$stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
+		$stmt->bindParam(":note_content", $noteContent, PDO::PARAM_STR);
+		$stmt->bindParam(":note_rating", $noteRating, PDO::PARAM_INT);
+		$stmt->bindParam(":note_date", $noteDate, PDO::PARAM_STR);
+		$stmt->execute();
+
+		return $noteId;
 
 	} catch ( PDOException $e ) {
 		echo $e->getMessage ();
@@ -314,7 +362,7 @@ function updateNoteByPaperIds($paperObj) {
 }
 
 // API 07
-function deleteNoteByPaperIds($paperObj) {
+function deleteNoteByPaperIds( $citerId, $citeeId ) {
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
@@ -322,8 +370,18 @@ function deleteNoteByPaperIds($paperObj) {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		# content
+		$noteId = checkCite( $citerId, $citeeId );
 
+		$sql = ( "DELETE FROM Cite WHERE citer_id = :citer_id AND citee_id = :citee_id;
+					DELETE FROM Note WHERE note_id = :note_id;" );
+
+		$stmt = $conn->prepare( $sql );
+		$stmt->bindParam(":citer_id", $citerId, PDO::PARAM_INT);
+		$stmt->bindParam(":citee_id", $citeeId, PDO::PARAM_INT);
+		$stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
+		$stmt->execute();
+
+		return true;
 
 	} catch ( PDOException $e ) {
 		echo $e->getMessage ();
@@ -429,7 +487,7 @@ function addTagByPaperId( $pubId, $tagContent ) {
 		$tagId = checkTag( $tagContent );
 
 		if( $tagId ) {	// if it's a new tag
-			$tagId = getMaxId('tag_id', 'Tag');
+			$tagId = getMaxId('tag_id', 'Tag') + 1;
 			insertTag($tagId, $tagContent);
 		}
 
@@ -614,6 +672,35 @@ function insertAuthorOf( $pub_id, $auth_id ) {
 	}
 	
 	$conn = null;	
+}
+
+function checkCite( $citerId, $citeeId ) {		// Check the passed citee & citer ids, new->true, existed->note_id
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+		
+	try {
+		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+		// set the PDO error mode to exception
+		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$sql = ("SELECT note_id FROM Cite WHERE citee_id = :citee_id AND citer_id = :citer_id");
+
+		$stmt = $conn->prepare( $sql );
+		$stmt->bindParam(":citee_id", $citeeId, PDO::PARAM_INT);
+		$stmt->bindParam(":citer_id", $citer_id, PDO::PARAM_INT);
+		$stmt->execute();
+		$result = $stmt->fetch ( PDO::FETCH_ASSOC );
+
+		if ( empty($result) ) {	// no records in Tag_of
+			return true;
+		} else {	// this tag still has records in Tag_of
+			return $result;
+		}
+
+	} catch ( PDOException $e ) {
+		echo $e->getMessage ();
+	}
+
+	$conn = null;
 }
 
 function checkTag( $tagContent ) {		// Check the passed STRING tag_content, if new->true, existed->tag_id
