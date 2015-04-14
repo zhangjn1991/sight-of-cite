@@ -34,8 +34,10 @@ if ($_SERVER ['REQUEST_METHOD'] == 'GET') {		// QUERY
 			case "search_paper_by_attrs": 	// API 04
 				break;
 			case "get_note_by_paper_ids":	// API 08
+				$value = getNoteByPaperIds( $_GET["pub_id_1"], $_GET["pub_id_2"] );
 				break;
 			case "get_paper_by_ids": 	// API 09
+				$value = getPaperByPubIds( $_GET["ids"] );
 				break;
 			default :
 				$value = 'Error input.';
@@ -122,7 +124,6 @@ function searchPaperByTitle($query) {
 		$stmt = $conn->prepare ( $sql );		
 		$query='%'.$query.'%';
 		$stmt->bindParam(":query", $query, PDO::PARAM_STR);
-
 		$stmt->execute ();
 		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
 
@@ -233,7 +234,7 @@ function updatePaper($paperObj) {
 		$stmt->bindParam(":cite_count", $paperObj['cite_count'], PDO::PARAM_INT);
 		$stmt->bindParam(":ISBN", $paperObj['ISBN'], PDO::PARAM_STR );
 		$stmt->execute ();
-		return 1;
+		return true;
 	} catch ( PDOException $e ) {
 		echo $e->getMessage ();
 	}
@@ -391,7 +392,7 @@ function deleteNoteByPaperIds( $citerId, $citeeId ) {
 }
 
 // API 08
-function getNoteByPaperIds($paperObj) {
+function getNoteByPaperIds( $citerId, $citeeId ) {	// return the Note object
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
@@ -399,8 +400,16 @@ function getNoteByPaperIds($paperObj) {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		# content
+		$noteId = checkCite( $citerId, $citeeId );
 
+		$sql = ("SELECT * FROM Note WHERE note_id = :note_id");
+
+		$stmt = $conn->prepare( $sql );
+		$stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
+		$stmt->execute();
+		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
+
+		return $result;
 
 	} catch ( PDOException $e ) {
 		echo $e->getMessage ();
@@ -473,6 +482,20 @@ function getPaperByPubId($pub_id) {
 	} else {
 		return "Error: Missing argument. ";
 	}
+}
+function getPaperByPubIds( $ids ) {
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+
+	$resultCount = 0;
+		
+	for ($i = 0; $i < strlen($ids); $i+=2) {
+
+		$pubId = $ids[$i];
+		
+		$result[ $resultCount ] = getPaperByPubId($pubId);
+	}
+
+	return $result;
 }
 
 // API 10
