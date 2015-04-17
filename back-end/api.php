@@ -19,7 +19,7 @@ $DBNAME = "sightofc_db";
 
 if ($_SERVER ['REQUEST_METHOD'] == 'GET') {		// QUERY
 	if (isset ( $_GET ["action"] )) {
-		$value = 'An error occured.';
+		$value = 'An error occurred.';
 		// call function 'get_all' or 'get_entry_by_id' according to the input
 		switch ($_GET ["action"]) :
 			case "get_all_paper" : // get the all the content
@@ -32,6 +32,7 @@ if ($_SERVER ['REQUEST_METHOD'] == 'GET') {		// QUERY
 				$value = searchPaperByTitle ($_GET ["title"]);		
 				break;
 			case "search_paper_by_attrs": 	// API 04
+				$value = searchPaperByAttrs ( $_GET["data"] );
 				break;
 			case "get_note_by_paper_ids":	// API 08
 				$value = getNoteByPaperIds( $_GET["pub_id_1"], $_GET["pub_id_2"] );
@@ -49,7 +50,7 @@ if ($_SERVER ['REQUEST_METHOD'] == 'GET') {		// QUERY
 else if($_SERVER ['REQUEST_METHOD'] == 'POST') {	// INSERT
 	if (isset ( $_POST ["action"] )) {
 
-		$value = 'An error occurd.';
+		$value = 'An error occurred.';
 
 		switch ($_POST ["action"]) :
 		case "add_paper" :	// API 01
@@ -269,7 +270,7 @@ function deletePaperByPaperId( $pubId ) {
 }
 
 // API 04
-function searchPaperByAttrs($paperObj) {
+function searchPaperByAttrs( $attrObj ) {
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
@@ -277,7 +278,28 @@ function searchPaperByAttrs($paperObj) {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		# content
+		print_r( $attrObj );
+		echo "\n";
+
+		foreach ($attrObj as $key => $value) {
+			// echo "attr: ".$key."\n";
+			$relation = translateRelation( substr($value, 0, 2) );
+			// echo "relation_trans: ".translateRelation( $relation )."\n";
+			$value = substr($value, 2);
+			// echo "value: ".substr($value, 2)."\n";
+
+
+			$sql = ("SELECT * FROM Publication WHERE pub_id ".$relation." :pub_id");
+			// $sql = ("SELECT * FROM Publication WHERE pub_id :relation :pub_id");
+			echo "sql: ".$sql."\n";
+			$stmt = $conn->prepare( $sql );
+			// $stmt->bindParam(":relation", $relation, PDO::PARAM_INT);
+			$stmt->bindParam(":pub_id", $value, PDO::PARAM_INT);
+			$stmt->execute();
+
+			// echo "sql: ".$sql."\n";
+			$result = $stmt->fetchAll( PDO::FETCH_CLASS );
+		}
 
 
 	} catch ( PDOException $e ) {
@@ -695,6 +717,31 @@ function insertAuthorOf( $pub_id, $auth_id ) {
 	}
 	
 	$conn = null;	
+}
+
+function translateRelation( $relation ) {
+
+	$result = 'an error occurred.';
+
+	switch ($relation) {
+		case 'lt':
+			$result = "<";
+			break;
+		case 'eq':
+			$result = "=";
+			break;
+		case 'gt':
+			$result = ">";
+			break;
+		case 'hs':
+			$result = "HAS";
+			break;
+		default:
+			$result = "error: invalid relation";
+			break;
+	}
+
+	return $result;
 }
 
 function checkCite( $citerId, $citeeId ) {		// Check the passed citee & citer ids, new->true, existed->note_id
