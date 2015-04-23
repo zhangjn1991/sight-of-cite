@@ -18,7 +18,7 @@ def getNumber(s):
 
 
 def getPaper(url):
-	soup = BeautifulSoup(urllib2.urlopen(url))
+	soup = BeautifulSoup(open(url))
 
 	paper = {}
 	paper_info = soup.find(class_='paper-info')
@@ -73,8 +73,10 @@ def getPaper(url):
 
 def scrapePaper(paper_msid):	
 	url = 'http://academic.research.microsoft.com/Publication/' + paper_msid
-	f = open('results/'+paper_msid+'.json','w')
-	json.dump(getPaper(url),f)
+	f = open('papers/'+paper_msid+'.json','w')
+	obj = getPaper(url)
+	obj['msid']=paper_msid
+	json.dump(obj,f)
 	f.close()
 
 f = open('all_paper_ids.txt')
@@ -84,16 +86,17 @@ for row in reader:
 	all_paper_ids.append(row[0])
 f.close()
 
-for i in range(0,len(all_paper_ids)):
-	cur_id = all_paper_ids[i]
-	print 'Cur:'+ cur_id + ' ' + str(i+1) + '/' + str(len(all_paper_ids))
-	try:
-		scrapePaper(cur_id)
-		time.sleep(120)
-	except:
-		print 'skip: ' + str(cur_id)
+# for i in range(0,5):
+# # for i in range(0,len(all_paper_ids)):
+# 	cur_id = all_paper_ids[i]
+# 	print 'Cur:'+ cur_id + ' ' + str(i+1) + '/' + str(len(all_paper_ids))
+# 	try:
+# 		scrapePaper(cur_id)
+# 		time.sleep(2)
+# 	except:
+# 		print 'skip: ' + str(cur_id)
 
-print 'Done'
+# print 'Done'
 
 
 
