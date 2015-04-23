@@ -1,8 +1,12 @@
 import json,csv,re,string
 
-def try_append(row, item, attr):
+def try_append(row, item, attr, isstring = 1):
+	if(isstring):
+		quote = "\'"
+	else:
+		quote = ""
 	if(item.has_key(attr)):
-		row.append(item[attr])
+		row.append(quote+(re.sub(r'[^\x00-\x7F]+','',  item[attr])) + quote)
 	else:
 		row.append("null")
 	return
@@ -19,13 +23,19 @@ for item in all:
 	for attr in ['id','msid','title','abstract','cite_count','DOI']:
 	 	try_append(row,item,attr)
 
+	try_append(row,item,'id')
+	try_append(row,item,'msid')
+	try_append(row,item,'title')
+	try_append(row,item,'abstract')
+	try_append(row,item,'cite_count',0)
+	try_append(row,item,'doi')
+
+
 	if(item.has_key('location') and item['location'].has_key('name')):
-		row.append(item['location']['name'])
+		row.append("\'"+item['location']['name']+"\'")
 	else:
 		row.append("null")
 
-	for i in range(0,len(row)):
-		row[i] = re.sub(r'[^\x00-\x7F]+','',  row[i])
 
 	rows.append(row)
 
@@ -43,8 +53,14 @@ rows = []
 rows.append(['id','msid','name','pub_count','cite_count','affiliation','photo_url','fields'])
 for item in all:	
 	row = []
-	for attr in ['id','msid','name','pub_count','cite_count','affiliation','photo_url']:
-	 	try_append(row,item,attr)
+	
+	try_append(row,item,'id')
+	try_append(row,item,'msid')
+	try_append(row,item,'name')
+	try_append(row,item,'pub_count',0)	
+	try_append(row,item,'cite_count',0)
+	try_append(row,item,'affiliation')
+	try_append(row,item,'photo_url')
 
 	if(item.has_key('fields')):
 		row.append(string.join(item['fields'],', '))
