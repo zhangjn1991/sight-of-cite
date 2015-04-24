@@ -476,9 +476,10 @@ function getPaperByPubId( $pub_id ) {
 				Publication.pub_year AS pub_year,
 				Publication.pub_ISBN AS ISBN,
 				Publication.pub_abstract AS abstract,
-				GROUP_CONCAT( DISTINCT Author.auth_name SEPARATOR ',') AS authorNames, 
-				GROUP_CONCAT( DISTINCT Author.auth_id SEPARATOR ',') AS authorIds, 
-				GROUP_CONCAT(DISTINCT Cite.citer_id SEPARATOR ',') AS citerIds, 
+				GROUP_CONCAT( DISTINCT Author.auth_name SEPARATOR ',' ) AS authorNames, 
+				GROUP_CONCAT( DISTINCT Author.auth_id SEPARATOR ',' ) AS authorIds, 
+				GROUP_CONCAT( DISTINCT Cite.citer_id SEPARATOR ',' ) AS citerIds, 
+				GROUP_CONCAT( DISTINCT Cite.citee_id SEPARATOR ',' ) AS citeeIds,
 				Location.loc_name AS location
 				FROM Author 
 					NATURAL JOIN Author_of 
@@ -516,12 +517,20 @@ function getPaperByPubId( $pub_id ) {
 			for ($i = 0; $i < sizeof($result[$resultCount]->citerIds); $i++) {
 				$citerPaperObj = new stdClass;
 				$citerPaperObj = getCiterInfo( $result[$resultCount]->citerIds[$i], $pub_id );
-				$result[$resultCount]->citer[$i] = $citerPaperObj;
+				$result[$resultCount]->citedbys[$i] = $citerPaperObj;
+			}
+
+			$result[$resultCount]->citeeIds = explode(',', $result[$resultCount]->citeeIds);
+			for ($i = 0; $i < sizeof($result[$resultCount]->citeeIds); $i++) {
+				$citeePaperObj = new stdClass;
+				$citeePaperObj = getCiteeInfo( $result[$resultCount]->citeeIdse[$i], $pub_id );
+				$result[$resultCount]->references[$i] = $citeePaperObj;
 			}
 
 			unset( $result[$resultCount]->authorNames );
 			unset( $result[$resultCount]->authorIds );
 			unset( $result[$resultCount]->citerIds );
+			unset( $result[$resultCount]->citeeIds );
 
 		}
 
@@ -718,7 +727,36 @@ function getCiterInfo( $citerId, $citeeId ) {
 		$stmt->bindParam(":citer_id", $citerId, PDO::PARAM_INT);
 		$stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
 		$stmt->execute();
-		$result = $stmt->fetch ( PDO::FETCH_ASSOC );
+		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
+
+		return $result;
+
+	} catch ( PDOException $e ) {
+		echo $e->getMessage ();
+	}
+
+	$conn = null;
+}
+
+function getCiteeInfo( $citeeId, $citerId ) {
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+		
+	try {
+		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+		// set the PDO error mode to exception
+		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$noteId = checkCite( $citerId, $citeeId );
+
+		$sql = ("SELECT Publication.pub_id, Publication.pub_title, Note.note_content, Note.note_rating, Note.note_date
+				FROM Publication, Note
+				WHERE Publication.pub_id = :citer_id AND Note.note_id = :note_id");
+
+		$stmt = $conn->prepare( $sql );
+		$stmt->bindParam(":citer_id", $citerId, PDO::PARAM_INT);
+		$stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
+		$stmt->execute();
+		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
 
 		return $result;
 
