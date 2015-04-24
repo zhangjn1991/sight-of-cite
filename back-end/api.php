@@ -183,8 +183,8 @@ function addPaper($paperObj) {
 			}
 		}
 
-		$sql = ("INSERT INTO Publication (pub_id, pub_title, pub_year, pub_cite_count, pub_ISBN, loc_id, pub_abstract)
-				VALUES (:pub_id, :title, :pub_year, :cite_count, :ISBN, :loc_id, :pub_abstract)");
+		$sql = ("INSERT INTO Publication (pub_id, pub_title, pub_year, pub_cite_count, pub_ISBN, loc_id, pub_MSid, pub_abstract)
+				VALUES (:pub_id, :title, :pub_year, :cite_count, :ISBN, :loc_id, :pub_MSid, :pub_abstract)");
 
 		$stmt = $conn->prepare ( $sql );
 		$stmt->bindParam(":pub_id", $NEW_PUB_ID, PDO::PARAM_INT);
@@ -193,6 +193,7 @@ function addPaper($paperObj) {
 		$stmt->bindParam(":cite_count", $paperObj['cite_count'], PDO::PARAM_INT);
 		$stmt->bindParam(":ISBN", $paperObj['ISBN'], PDO::PARAM_STR );
 		$stmt->bindParam(":pub_abstract", $paperObj['abstract'], PDO::PARAM_STR);
+		$stmt->bindParam(":pub_MSid", $paperObj['MSid'], PDO::PARAM_INT);
 		$stmt->bindParam(":loc_id", $loc_id, PDO::PARAM_INT);
 		$stmt->execute();
 
