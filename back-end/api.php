@@ -80,9 +80,8 @@ else if($_SERVER ['REQUEST_METHOD'] == 'POST') {	// INSERT
 		case "delete_tab_by_tag_id" :	// API 12
 			$value = deleteTagByTagId( $_POST['tag_id'] );
 			break;
-
-		case "test" :
-			$value = checkTagOf( $_POST['tag_id'] );
+		case "add_citation_by_paper_ids" :	// API 13
+			$value = addCitationByPaperIds( $_POST['paper_citer'], $_POST['paper_citee'] );
 			break;
 		default :
 			$value = 'Error input.';
@@ -160,7 +159,7 @@ function searchPaperByTitle($query) {
 //////////////////////////////
 
 // API 01
-function addPaper($paperObj) {
+function addPaper( $paperObj ) {
 	
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;      
 	
@@ -221,7 +220,7 @@ function addPaper($paperObj) {
 }
 
 // API 02
-function updatePaper($paperObj) {
+function updatePaper( $paperObj ) {
 	
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 	
@@ -291,28 +290,36 @@ function searchPaperByAttrs( $attrObj ) {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		print_r( $attrObj );
-		echo "\n";
+		$count = 0;
+		$sql = "";
 
 		foreach ($attrObj as $key => $value) {
-			// echo "attr: ".$key."\n";
+			$attribute = $key;
+			echo "attribute: ".$attribute."\n";
 			$relation = translateRelation( substr($value, 0, 2) );
-			// echo "relation_trans: ".translateRelation( $relation )."\n";
+			echo "relation: ".$relation."\n";
 			$value = substr($value, 2);
-			// echo "value: ".substr($value, 2)."\n";
+			echo "value: ".$value."\n";
 
+			if ( $relation == "LIKE" ) {
+				$value = "'%".$value."%'";
+			}
 
-			$sql = ("SELECT * FROM Publication WHERE pub_id ".$relation." :pub_id");
-			// $sql = ("SELECT * FROM Publication WHERE pub_id :relation :pub_id");
-			echo "sql: ".$sql."\n";
-			$stmt = $conn->prepare( $sql );
-			// $stmt->bindParam(":relation", $relation, PDO::PARAM_INT);
-			$stmt->bindParam(":pub_id", $value, PDO::PARAM_INT);
-			$stmt->execute();
+			if ( $count == 0 ) {
+				$sql = ("SELECT * FROM Publication WHERE $attribute $relation $value ");
+				$count = 1;
+			} else {
+				$sql = ( $sql."AND $attribute $relation $value" );
+			}
 
-			// echo "sql: ".$sql."\n";
-			$result = $stmt->fetchAll( PDO::FETCH_CLASS );
 		}
+
+		echo "sql: ".$sql."\n";
+		$stmt = $conn->prepare( $sql );
+		$stmt->execute();			
+		$result = $stmt->fetchAll( PDO::FETCH_CLASS );
+		echo "SQL: ".$sql."\n";
+		return $result;
 
 
 	} catch ( PDOException $e ) {
@@ -454,7 +461,7 @@ function getNoteByPaperIds( $citerId, $citeeId ) {	// return the Note object
 }
 
 // API 09
-function getPaperByPubId($pub_id) {
+function getPaperByPubId( $pub_id ) {
 	
 	if (isset ( $pub_id ) && !empty( $pub_id ) ) {	//input validation
 		
@@ -468,11 +475,18 @@ function getPaperByPubId($pub_id) {
 				Publication.pub_title AS title, 
 				Publication.pub_year AS pub_year,
 				Publication.pub_ISBN AS ISBN,
-				Publication.pub_cite_count AS cite_count,
-				GROUP_CONCAT(Author.auth_name SEPARATOR ',') AS authorNames, 
-				GROUP_CONCAT(Author.auth_id SEPARATOR ',') AS authorIds, 
+				Publication.pub_abstract AS abstract,
+				GROUP_CONCAT( DISTINCT Author.auth_name SEPARATOR ',') AS authorNames, 
+				GROUP_CONCAT( DISTINCT Author.auth_id SEPARATOR ',') AS authorIds, 
+				GROUP_CONCAT(DISTINCT Cite.citer_id SEPARATOR ',') AS citerIds, 
 				Location.loc_name AS location
-				FROM Author NATURAL JOIN Author_of NATURAL JOIN Publication NATURAL JOIN Location");
+				FROM Author 
+					NATURAL JOIN Author_of 
+					NATURAL JOIN Publication 
+					NATURAL JOIN Location 
+					NATURAL JOIN Tag_of
+					NATURAL JOIN Tag
+					NATURAL JOIN Cite");
 
 		if ( $pub_id == "getAll") {	// SPECIAL CASE: get all paper
 			$sql = $sql." GROUP BY Publication.pub_id";
@@ -488,7 +502,6 @@ function getPaperByPubId($pub_id) {
 		// re-formating the result into associative array
 		for ($resultCount = 0; $resultCount < sizeof($result); $resultCount++) {
 			
-			
 			$result[$resultCount]->authorNames = explode(',', $result[$resultCount]->authorNames);
 			$result[$resultCount]->authorIds = explode(',', $result[$resultCount]->authorIds);
 
@@ -499,8 +512,16 @@ function getPaperByPubId($pub_id) {
 				$result[$resultCount]->author[$i] = $authorObj;
 			}
 
-			unset( $result[$resultCount]->authorNames);
-			unset( $result[$resultCount]->authorIds);
+			$result[$resultCount]->citerIds = explode(',', $result[$resultCount]->citerIds);
+			for ($i = 0; $i < sizeof($result[$resultCount]->citerIds); $i++) {
+				$citerPaperObj = new stdClass;
+				$citerPaperObj = getCiterInfo( $result[$resultCount]->citerIds[$i], $pub_id );
+				$result[$resultCount]->citer[$i] = $citerPaperObj;
+			}
+
+			unset( $result[$resultCount]->authorNames );
+			unset( $result[$resultCount]->authorIds );
+			unset( $result[$resultCount]->citerIds );
 
 		}
 
@@ -566,7 +587,7 @@ function addTagByPaperId( $pubId, $tagContent ) {
 }
 
 // API 11
-function deleteTagByPaperId($pubId, $tagId) {
+function deleteTagByPaperId( $pubId, $tagId ) {
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
@@ -595,7 +616,7 @@ function deleteTagByPaperId($pubId, $tagId) {
 }
 
 // API 12
-function deleteTagByTagId($tagId) {
+function deleteTagByTagId( $tagId ) {
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 
 	try {
@@ -628,10 +649,36 @@ function deleteTagByTagId($tagId) {
 	$conn = null;
 }
 
+// API 13
+function addCitationByPaperIds( $citerId, $citeeId ) {
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+		
+	try {
+		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+		// set the PDO error mode to exception
+		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$sql = ( "INSERT INTO Cite (citer_id, citee_id) 
+					VALUES (:citer_id, :citee_id)" );
+
+		$stmt = $conn->prepare( $sql );
+		$stmt->bindParam(":citer_id", $citerId, PDO::PARAM_INT);
+		$stmt->bindParam(":citee_id", $citeeId, PDO::PARAM_INT);
+		$stmt->execute();
+
+		return true;
+
+	} catch ( PDOException $e ) {
+		echo $e->getMessage ();
+	}
+
+	$conn = null;
+}
+
 ////////////////////////////////
 //   Peripheral Functions    //
 //////////////////////////////
-function getMaxId($idName, $tableName) {
+function getMaxId( $idName, $tableName ) {
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
@@ -645,6 +692,35 @@ function getMaxId($idName, $tableName) {
 		$result = $stmt->fetch( PDO::FETCH_ASSOC );	
 
 		return $result['maxId'];
+
+	} catch ( PDOException $e ) {
+		echo $e->getMessage ();
+	}
+
+	$conn = null;
+}
+
+function getCiterInfo( $citerId, $citeeId ) {
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+		
+	try {
+		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+		// set the PDO error mode to exception
+		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$noteId = checkCite( $citerId, $citeeId );
+
+		$sql = ("SELECT Publication.pub_id, Publication.pub_title, Note.note_content, Note.note_rating, Note.note_date
+				FROM Publication, Note
+				WHERE Publication.pub_id = :citer_id AND Note.note_id = :note_id");
+
+		$stmt = $conn->prepare( $sql );
+		$stmt->bindParam(":citer_id", $citerId, PDO::PARAM_INT);
+		$stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
+		$stmt->execute();
+		$result = $stmt->fetch ( PDO::FETCH_ASSOC );
+
+		return $result;
 
 	} catch ( PDOException $e ) {
 		echo $e->getMessage ();
@@ -801,7 +877,7 @@ function translateRelation( $relation ) {
 			$result = ">";
 			break;
 		case 'hs':
-			$result = "HAS";
+			$result = "LIKE";
 			break;
 		default:
 			$result = "error: invalid relation";
@@ -919,7 +995,7 @@ function deleteTag( $tagId ) {		// delete this tag from Tag table
 	$conn = null;
 }
 
-function getTagIdByPubId ($pubId, $tagId) {
+function getTagIdByPubId ( $pubId, $tagId ) {
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
