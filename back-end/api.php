@@ -69,7 +69,7 @@ else if($_SERVER ['REQUEST_METHOD'] == 'POST') {	// INSERT
 			$value = deletePaperByPaperId( $_POST['data']['pub_id']);
 			break;
 		case "add_note_by_paper_ids":	// API 05
-			$value = addNoteByPaperIds( $_POST['data']['pub_id_1'], $_POST['data']['pub_id_2'], $_POST['data']['note_content'] );
+			$value = addNoteByPaperIds( $_POST['data']['pub_id_1'], $_POST['data']['pub_id_2'], $_POST['data']['note_content'], $_POST['data']['rating'], $_POST['data']['date']);
 			break;
 		case "update_note_by_paper_ids":	// API 06
 			$value = updateNoteByPaperIds( $_POST['data']['pub_id_1'], $_POST['data']['pub_id_2'], $_POST['data']['note_content'], $_POST['data']['rating'], $_POST['data']['date']);
@@ -342,14 +342,16 @@ function addNoteByPaperIds( $citerId, $citeeId, $noteContent, $noteRating, $note
 
 			$sql = ( "INSERT INTO Cite (citer_id, citee_id, note_id) 
 						VALUES (:citer_id, :citee_id, :note_id); 
-						INSERT INTO Note (note_id, note_content)
-						VALUES (:note_id, :note_content)" );
+						INSERT INTO Note (note_id, note_content, note_rating, note_date)
+						VALUES (:note_id, :note_content, :note_rating, :note_date)" );
 
 			$stmt = $conn->prepare( $sql );
 			$stmt->bindParam(":citer_id", $citerId, PDO::PARAM_INT);
 			$stmt->bindParam(":citee_id", $citeeId, PDO::PARAM_INT);
 			$stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
 			$stmt->bindParam(":note_content", $noteContent, PDO::PARAM_STR);
+			$stmt->bindParam(":note_rating", $noteRating, PDO::PARAM_INT);
+			$stmt->bindParam(":note_date", $noteDate, PDO::PARAM_STR);
 			$stmt->execute();
 
 			return $noteId;
