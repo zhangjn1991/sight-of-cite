@@ -1,21 +1,56 @@
 Final Report
 
-PART I Brief description of accomplishments
+PART I Brief Description of Accomplishments
 A personal web application--"Sight of Cite" for managing publications has been developed. It provides the user a friendly interface for performing insertion, updating, searching and deletion in the personal library. An interactive graphic has been developed to show the relationship and inter-citation among the user's collection.
 
-PART II Discuss the usefulness of the project
+PART II Usefulness
+The interactive and responsive interface provide an efficient way for academic individuals to manage their library of knowledge. The innovative feature of showing the citation relationship, i.e. article A's comment of article B, is of vital help for one trying to understand a certain domain.
+
+PART III Data
+1. ER Diagram & Schema
+2. Specify Data Resources
+The pilot dataset of 25 articles was manually collected from Google Scholar and Microsoft Academic. Dozens of dummy articles, authors and locations has been used during the development for testing. As for the final stage, a list of article pairs (i.e. A cited B) was manually generated with the specific ID assigned by Microsoft Academic. A crawler based on BeautifulSoup was feed with the list and stored all the informations of each article and author down to our system. The final dataset consists of 203 articles and 456 authors.
+
+PART IV Functionality
+Add/modify/delete a paper and its author(s)
+Add/modify/delete tag(s) to a paper
+Add/modify/delete two papers' citation relationship
+View all the publications
+View collection by tag
+View collection by a stack of conditions
+View note between two specific papers
+A interactive net view of a collection of articles with their citation relationship
+
+PART V Basic Functions
+Search Library - User can search library for publications with condition on attributes. The conditions can be created as a stack. For each condition, user can choose an attribute, a predicate (>, <, =, has) and a value to create this condition. For example, "title has 'Graph'" and "year > 2010". 
+Paper attributes: title, year, keyword, ...
+User attributes: Collection, Tag
+User can have multiple condition with "and" relations.
+Edit Library - User can edit their publication library.
+Insert new paper into library: User will have the option to input a URL of a paper in Microsoft Academic or enter information manually in an form. 
+Delete a paper from library
+Update the attributes of a paper in library: The detail section shown below will give user an option to edit each fields. 
+Categorize
+User can group paper into collections: User select some papers and choose which collection to put in. When click on the collection name on the side, only papers in that collection are displayed in the table. 
+Add tag to paper: User can change the tag in the "Detail" section. The tags can be used for searching. 
+
+PART VI Advanced Functions
+Relationship Annotation
+View/Add/Edit Annotation in Paper profile page: User can add note in for each paper in the Reference and Cited-By table.  
+View/Add/Edit Annotation in Visualization: The notes are visible in the visualization as well. 
+Add Rating for A → B. e.g. How close A is referencing B. User can add rating in the note as well to describe the closeness between two paper with citation relationship.
+Visualization
+Add papers at node into the visualization canvas. 
+Expand to put a node's references and citations into the graphs. 
+Display citation relationship between nodes as links. 
+Filter nodes using the search section on the left to avoid cluster. 
 
 
-PART III Discuss the data in the database
+PART VII Technical Challenge
 
-PART IV
+PART VIII Deviation from the Initial Plan
+After a semester-long continuous development, we as a team tackled down various technical difficulties, and gained so much from it. Most of the original plan has been realized as a product. While there is one thing limits us advance a step forward, that is the data. It is hardly imaginable how difficult it is to acquire accurate academic dataset, especially for those aged files, like an article in the 1980s. It took us quite some time try to find the truth out of numerous incorrect and duplicated information, but still, the final dataset contains a certain level of error.
 
-PART V
-
-PART VI
-
-PART VII
-
-PART VIII
-
-PART IX
+PART IX Division of Labor
+Zhang, Jingning: Project Management, Front-end research and development, crawler implementation;
+Liu, Yishuo: PHP & SQL development, data collection, website maintenance.
