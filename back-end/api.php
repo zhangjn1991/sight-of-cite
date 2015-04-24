@@ -196,7 +196,13 @@ function addPaper($paperObj) {
 
 		foreach ($paperObj['location'] as $number => $pair) {
 			foreach ($pair as $key => $loc_name) {
-				
+				$findLocId = checkLocation( $loc_name );
+				if ( empty($findLocId) ) {
+					$NEW_LOC_ID = insertLocation( $loc_name );
+					$loc_id = $NEW_LOC_ID;
+				} else {
+					$loc_id = $findLocId;
+				}
 			}
 		}
 
@@ -658,8 +664,62 @@ function checkAuthor( $auth_name ) {	// Check the passed auth_name, if new->empt
 		if ( empty($result) ) {	// it's new
 			return;
 		} else {	// it's existed
-			return $result[auth_id];
+			return $result['auth_id'];
 		}
+
+	} catch ( PDOException $e ) {
+		echo $e->getMessage ();
+	}
+
+	$conn = null;
+}
+
+function checkLocation( $loc_name ) {	// Check the passed loc_name, if new->empty, existed->loc_id
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+		
+	try {
+		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+		// set the PDO error mode to exception
+		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$sql = ("SELECT loc_id FROM Location WHERE loc_name = :loc_name");
+
+		$stmt = $conn->prepare( $sql );
+		$stmt->bindParam(":loc_name", $loc_name, PDO::PARAM_STR);
+		$stmt->execute();
+		$result = $stmt->fetch ( PDO::FETCH_ASSOC );
+
+		if ( empty($result) ) {	// it's new
+			return;
+		} else {	// it's existed
+			return $result['loc_id'];
+		}
+
+	} catch ( PDOException $e ) {
+		echo $e->getMessage ();
+	}
+
+	$conn = null;
+}
+
+function insertLocation( $loc_name ) {
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+
+	$NEW_LOC_ID = getMaxId( "loc_id", "Location" ) + 1;
+	
+	try {
+		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+		// set the PDO error mode to exception
+		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$sql = ("INSERT INTO Location (loc_id, loc_name) VALUES (:loc_id, :loc_name)");
+
+		$stmt = $conn->prepare ( $sql );
+		$stmt->bindParam(":loc_id", $NEW_LOC_ID, PDO::PARAM_INT);
+		$stmt->bindParam(":loc_name", $loc_name, PDO::PARAM_STR);
+		$stmt->execute();
+
+		return $NEW_LOC_ID;
 
 	} catch ( PDOException $e ) {
 		echo $e->getMessage ();
