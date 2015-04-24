@@ -260,7 +260,7 @@
   },
   {
     "title": "Thumbs up? Sentiment Classification using Machine Learning Techniques",
-    "abstract": "We consider the problem of classifying documents not by\n                   topic, but by overall sentiment, e.g., determining whether\n                   a review is positive or negative. Using movie reviews as\n                   data, we find that standard machine learning  techniques\n                   definitively outperform human-produced baselines. However,\n                   the three machine learning  methods we employed (Naive\n                   Bayes, maximum entropy  classification, and support vector \n                   machines) do not perform as well on sentiment\n                   classification  as on traditional topic-based\n                   categorization. We conclude by examining factors that make\n                   the sentiment classification  problem more challenging.",
+    "abstract": "We consider the problem of classifying documents not by topic, but by overall sentiment, e.g., determining whether a review is positive or negative. Using movie reviews as data, we find that standard machine learning  techniques definitively outperform human-produced baselines. However, the three machine learning  methods we employed (Naive Bayes, maximum entropy  classification, and support vector  machines) do not perform as well on sentiment classification  as on traditional topic-based categorization. We conclude by examining factors that make the sentiment classification  problem more challenging.",
     "cite_count": "812",
     "location": {
       "url": "../Journal/299/corr-computing-research-repository",
@@ -2111,7 +2111,7 @@
   {
     "DOI": "10.1145/128756.128759",
     "title": "The Active Badge Location System",
-    "abstract": "A novel system for the location of people in an office\n                 environment is described. Members of staff wear badges\n                 that transmit signals providing information about their\n                 location to a centralized location service, through a\n                 network of sensors. The paper also examines alternative\n                 location techniques, system design  issues and\n                 applications, particularly relating to telephone call\n                 routing. Location systems raise concerns about the\n                 privacy of an individual, and these issues are also\n                 addressed.",
+    "abstract": "A novel system for the location of people in an office environment is described. Members of staff wear badges that transmit signals providing information about their location to a centralized location service, through a network of sensors. The paper also examines alternative location techniques, system design  issues and applications, particularly relating to telephone call routing. Location systems raise concerns about the privacy of an individual, and these issues are also addressed.",
     "cite_count": "1867",
     "location": {
       "url": "../Journal/51/tois-acm-transactions-on-information-systems",

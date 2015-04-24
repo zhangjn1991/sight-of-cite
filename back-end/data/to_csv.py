@@ -20,15 +20,15 @@ rows = []
 rows.append(['id','msid','title','abstract','cite_count','DOI','location'])
 for item in all:	
 	row = []
-	for attr in ['id','msid','title','abstract','cite_count','DOI']:
-	 	try_append(row,item,attr)
+	# for attr in ['id','msid','title','abstract','cite_count','DOI']:
+	#  	try_append(row,item,attr)
 
-	try_append(row,item,'id')
-	try_append(row,item,'msid')
+	try_append(row,item,'id',0)
+	try_append(row,item,'msid',0)
 	try_append(row,item,'title')
 	try_append(row,item,'abstract')
 	try_append(row,item,'cite_count',0)
-	try_append(row,item,'doi')
+	try_append(row,item,'DOI')
 
 
 	if(item.has_key('location') and item['location'].has_key('name')):
@@ -54,8 +54,8 @@ rows.append(['id','msid','name','pub_count','cite_count','affiliation','photo_ur
 for item in all:	
 	row = []
 	
-	try_append(row,item,'id')
-	try_append(row,item,'msid')
+	try_append(row,item,'id',0)
+	try_append(row,item,'msid',0)
 	try_append(row,item,'name')
 	try_append(row,item,'pub_count',0)	
 	try_append(row,item,'cite_count',0)
