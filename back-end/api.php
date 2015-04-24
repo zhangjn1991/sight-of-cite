@@ -495,7 +495,8 @@ function getPaperByPubId( $pub_id ) {
 				GROUP_CONCAT( DISTINCT Author.auth_name SEPARATOR ',' ) AS authorNames, 
 				GROUP_CONCAT( DISTINCT Author.auth_id SEPARATOR ',' ) AS authorIds, 
 				GROUP_CONCAT( DISTINCT Cite.citer_id SEPARATOR ',' ) AS citerIds, 
-				GROUP_CONCAT( DISTINCT Cite.citee_id SEPARATOR ',' ) AS citeeIds
+				GROUP_CONCAT( DISTINCT Cite.citee_id SEPARATOR ',' ) AS citeeIds,
+				GROUP_CONCAT( DISTINCT Tag.tag_content SEPARATOR ',') AS tags
 				FROM Author 
 					NATURAL JOIN Author_of 
 					NATURAL JOIN Publication 
