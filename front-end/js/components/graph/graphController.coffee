@@ -6,6 +6,8 @@ angular.module 'sightApp'
 	svgWidth = totalWidth - margin.left - margin.right
 	svgHeight = totalHeight - margin.top - margin.bottom
 
+	CIRCLE_FILL = d3.hsl("#c1ced7")
+
 	svg = d3.select 'svg'
 	    .attr 'width', totalWidth
 	    .attr 'height', totalHeight
@@ -52,15 +54,16 @@ angular.module 'sightApp'
 		nodes		
 			.append 'circle'		
 			.attr 'r', getRadius
+			.attr 'fill',getFill
 			
 		
 		nodes.append 'text'
-			.attr 'class', '.cite-count-text'
+			.attr 'class', 'cite-count'
 			.attr 'y', '0.3em'
 			.text (d)->d.cite_count
 
 		nodes.append 'text'
-			.attr 'class', '.title'
+			.attr 'class', 'title'
 			.attr 'y', (d)->getRadius(d)+20
 			.text (d)->d.name
 
@@ -87,10 +90,13 @@ angular.module 'sightApp'
 	getRadius = (d)->
 		Math.max(Math.sqrt(d.cite_count)*5,10)
 
+	getFill = (d)->
+		ratio = Math.sqrt(d.cite_count / 10)
+		CIRCLE_FILL.darker(ratio)		
+
 	addNewPapers(new_nodes)
 
 
 
 
 
-	    

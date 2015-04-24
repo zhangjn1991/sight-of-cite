@@ -379,5 +379,18 @@ header {
   .graph-view-container svg {
     width: 100%;
     height: 100%; }
+  .graph-view-container .node circle {
+    stroke-width: 3;
+    stroke: #334e5f; }
+  .graph-view-container .node text {
+    font-weight: 200;
+    text-anchor: middle; }
+    .graph-view-container .node text.cite-count {
+      fill: #f9fafb; }
+    .graph-view-container .node text.title {
+      fill: rgba(96, 123, 141, 0.5); }
+  .graph-view-container .link {
+    stroke-width: 2;
+    stroke: #334e5f; }
 
 /*# sourceMappingURL=index.css.map */
