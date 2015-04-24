@@ -486,6 +486,8 @@ function getPaperByPubId( $pub_id ) {
 				Publication.pub_title AS title, 
 				Publication.pub_year AS pub_year,
 				Publication.pub_ISBN AS ISBN,
+				Publicatoin.pub_cite_count AS cite_count,
+				Publication.pub_location AS location,
 				Publication.pub_abstract AS abstract,
 				GROUP_CONCAT( DISTINCT Author.auth_name SEPARATOR ',' ) AS authorNames, 
 				GROUP_CONCAT( DISTINCT Author.auth_id SEPARATOR ',' ) AS authorIds, 
