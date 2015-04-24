@@ -1,5 +1,5 @@
-totalWidth = 960
-totalHeight = 640
+totalWidth = 1000
+totalHeight = 1000
 margin = { top: 10, right: 10, bottom: 10, left: 10 }
 svgWidth = totalWidth - margin.left - margin.right
 svgHeight = totalHeight - margin.top - margin.bottom
@@ -13,10 +13,18 @@ svg = d3.select 'svg'
 nodeSvg = d3.select '.node-canvas'
 linkSvg = d3.select '.link-canvas'
 
-new_nodes = [{id:1,name:'A', cite_count:35, neighbors:[{id:2}]},{id:2,name:'B',cite_count:2,neighbors:[{id:3}]},{id:3,cite_count:105,name:'C'},{id:1,name:'C'},{id:3,name:'D'}]
+CIRCLE_FILL = d3.hsl("#c1ced7")
+
 all_links = []
 all_nodes = []
+node_data = []
+cite_data = []
 
+d3.json 'http://127.0.0.1:8888/sight-of-cite/back-end/api.php?action=get_cite',(json)->cite_data=json
+d3.json 'http://127.0.0.1:8888/sight-of-cite/back-end/api.php?action=get_all_paper',(json)->
+		node_data=json
+		addPaperById("130")
+  
 
 
 tickEventHandler = ()->
@@ -45,11 +53,13 @@ updateGraph = ()->
 		.enter()
 		.append 'g'
 		.attr 'class','node'
+		.on 'dblclick', nodeDoubleClicked
 		.call force.drag
 
 	nodes		
 		.append 'circle'		
 		.attr 'r', getRadius
+		.attr 'fill',getFill
 		
 	
 	nodes.append 'text'
@@ -58,9 +68,9 @@ updateGraph = ()->
 		.text (d)->d.cite_count
 
 	nodes.append 'text'
-		.attr 'class', '.title'
+		.attr 'class', 'title'
 		.attr 'y', (d)->getRadius(d)+20
-		.text (d)->d.name
+		.text (d)->d.title
 
 	links = linkSvg.selectAll '.link'
 		.data(all_links)
@@ -69,24 +79,45 @@ updateGraph = ()->
 		.attr 'class','link'
 
 addNodes = (nodesToAdd)->
-	all_nodes = _.uniq(_.flatten([all_nodes,nodesToAdd]),(d)->d.id)
+	all_nodes = _.uniq(_.flatten([all_nodes,nodesToAdd]),(d)->d.pub_id)
 
 	all_links = []
 
 	_.each all_nodes,(d)->
-		_.each d.neighbors,(n)->
-			tar = _.find all_nodes,(d)->d.id==n.id
+		d.tarIds = _.pluck(_.where(cite_data,{citer_id:d.pub_id}),'citee_id')
+		d.srcIds = _.pluck(_.where(cite_data,{citee_id:d.pub_id}),'citer_id')
+		_.each d.tarIds,(n)->
+			tar = _.findWhere all_nodes,{pub_id: n}
 			if tar? then all_links.push {source:d, target:tar}
+		_.each d.srcIds,(n)->
+			src = _.findWhere all_nodes,{pub_id: n}
+			if src? then all_links.push {source:src, target:d}		
+
+		0
+	all_links = _.uniq all_links,false,(d)->"#{d.source.pub_id}-#{d.target.pub_id}"
+
 
 addNewPapers = (papersToAdd)->
 	addNodes papersToAdd
 	updateGraph()
 
+expandPaper = (paper)->
+	papersToAdd = []
+	neighbor_ids = _.pluck(_.flatten([paper.references, paper.citedbys]),'pub_id')
+	papersToAdd = _.filter node_data, (d)->_.contains(neighbor_ids,d.pub_id)
+	addNewPapers(papersToAdd)
+
+nodeDoubleClicked = (d)->
+	expandPaper(d)
+
 getRadius = (d)->
-	Math.max(Math.sqrt(d.cite_count)*5,10)
+	Math.max(Math.sqrt(parseInt(d.cite_count)),10)
 
-addNewPapers(new_nodes)
+getFill = (d)->
+		ratio = (d.cite_count / 500)^0.25
+		CIRCLE_FILL.darker(ratio)
 
-
+addPaperById = (id)->
+	expandPaper(_.where(node_data,{pub_id:id})[0])
 
 

@@ -1,12 +1,10 @@
 angular.module 'sightApp'
-.controller 'GraphController', ()->	
-	totalWidth = 960
-	totalHeight = 640
+.controller 'GraphController', ($scope,$http)->	
+	totalWidth = 1000
+	totalHeight = 600
 	margin = { top: 10, right: 10, bottom: 10, left: 10 }
 	svgWidth = totalWidth - margin.left - margin.right
 	svgHeight = totalHeight - margin.top - margin.bottom
-
-	CIRCLE_FILL = d3.hsl("#c1ced7")
 
 	svg = d3.select 'svg'
 	    .attr 'width', totalWidth
@@ -17,10 +15,23 @@ angular.module 'sightApp'
 	nodeSvg = d3.select '.node-canvas'
 	linkSvg = d3.select '.link-canvas'
 
-	new_nodes = [{id:1,name:'A', cite_count:35, neighbors:[{id:2}]},{id:2,name:'B',cite_count:2,neighbors:[{id:3}]},{id:3,cite_count:105,name:'C'},{id:1,name:'C'},{id:3,name:'D'}]
+	CIRCLE_FILL = d3.hsl("#c1ced7")
+
 	all_links = []
 	all_nodes = []
+	$scope.node_data = []
+	$scope.cite_data = []
 
+	d3.json 'http://127.0.0.1:8888/sight-of-cite/back-end/api.php?action=get_cite',(json)->
+		$scope.cite_data=json
+		$http.get('http://127.0.0.1:8888/sight-of-cite/back-end/api.php?action=get_all_paper').success (json)->
+				$scope.node_data=json
+				initial_id = $scope.globalCtrl.initialGraphPaperId
+				if(initial_id?)
+					addPaperById(initial_id)
+				else
+					addPaperById("103")
+	  
 
 
 	tickEventHandler = ()->
@@ -49,6 +60,8 @@ angular.module 'sightApp'
 			.enter()
 			.append 'g'
 			.attr 'class','node'
+			.on 'click', nodeClicked
+			.on 'dblclick', nodeDoubleClicked
 			.call force.drag
 
 		nodes		
@@ -65,7 +78,7 @@ angular.module 'sightApp'
 		nodes.append 'text'
 			.attr 'class', 'title'
 			.attr 'y', (d)->getRadius(d)+20
-			.text (d)->d.name
+			.text (d)->d.title
 
 		links = linkSvg.selectAll '.link'
 			.data(all_links)
@@ -74,27 +87,53 @@ angular.module 'sightApp'
 			.attr 'class','link'
 
 	addNodes = (nodesToAdd)->
-		all_nodes = _.uniq(_.flatten([all_nodes,nodesToAdd]),(d)->d.id)
+		all_nodes = _.uniq(_.flatten([all_nodes,nodesToAdd]),(d)->d.pub_id)
 
 		all_links = []
 
 		_.each all_nodes,(d)->
-			_.each d.neighbors,(n)->
-				tar = _.find all_nodes,(d)->d.id==n.id
+			d.tarIds = _.pluck(_.where($scope.cite_data,{citer_id:d.pub_id}),'citee_id')
+			d.srcIds = _.pluck(_.where($scope.cite_data,{citee_id:d.pub_id}),'citer_id')
+			_.each d.tarIds,(n)->
+				tar = _.findWhere all_nodes,{pub_id: n}
 				if tar? then all_links.push {source:d, target:tar}
+			_.each d.srcIds,(n)->
+				src = _.findWhere all_nodes,{pub_id: n}
+				if src? then all_links.push {source:src, target:d}		
+
+			0
+		all_links = _.uniq all_links,false,(d)->"#{d.source.pub_id}-#{d.target.pub_id}"
+
 
 	addNewPapers = (papersToAdd)->
 		addNodes papersToAdd
 		updateGraph()
 
+	expandPaper = (paper)->
+		papersToAdd = []
+		neighbor_ids = _.pluck(_.flatten([paper.references, paper.citedbys]),'pub_id')
+		papersToAdd = _.filter $scope.node_data, (d)->_.contains(neighbor_ids,d.pub_id)
+		addNewPapers(papersToAdd)
+
+	nodeClicked = (d)->
+		$scope.globalCtrl.infoBarCtrl.setCurrentEntity d;
+		$scope.$apply()
+
+	nodeDoubleClicked = (d)->
+		expandPaper(d)
+
 	getRadius = (d)->
-		Math.max(Math.sqrt(d.cite_count)*5,10)
+		Math.max(Math.sqrt(parseInt(d.cite_count)),10)
 
 	getFill = (d)->
-		ratio = Math.sqrt(d.cite_count / 10)
-		CIRCLE_FILL.darker(ratio)		
+			ratio = (d.cite_count / 500)^0.25
+			CIRCLE_FILL.darker(ratio)
 
-	addNewPapers(new_nodes)
+	addPaperById = (id)->
+		expandPaper(_.where($scope.node_data,{pub_id:id})[0])
+
+
+
 
 
 

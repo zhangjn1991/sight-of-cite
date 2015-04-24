@@ -378,7 +378,7 @@ header{
 		}
 	}
 	
-	.detail-container:hover{
+	&:hover{
 		.button-container{
 			@include show;
 		}
@@ -408,7 +408,9 @@ header{
 
 			margin:0.5em;
 			.cite-row{
-				display:flex;			
+				display:flex;
+				align-items:center;
+				width:100%;			
 				&:nth-child(odd){
 					background:$color-background-cite-table;
 				}
@@ -417,7 +419,7 @@ header{
 					background:$color-background-cite-table-secondary;
 				}
 
-				&:hover{
+				&:hover {
 					background:$color-background-hover;
 				}
 				&.active{
@@ -432,13 +434,18 @@ header{
 				}
 
 				div{
+					
 					padding:0.5em 5px;
 
 				}
 				.rating{
+					flex:none;
 					font-weight:400;
 					width:30px;
 				}
+
+			
+				
 			}			
 		}
 	}
@@ -640,13 +647,22 @@ header{
 			
 			stroke-width:3;
 			stroke:$color-graph-circle-stroke;
+			@include transition(fill);
+			cursor:pointer;
+			
+			&:hover{
+				fill:$color-highlight;
+			}
 		}	
+
 
 		text{
 			font-weight:200;
 			text-anchor:middle;
+			pointer-events:none;
 			&.cite-count{
 				fill:$color-graph-circle-text-cite;
+				font-size:0.8em
 				
 			}
 			&.title{

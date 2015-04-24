@@ -59,6 +59,9 @@ angular.module('sightApp').controller('SearchBarController', function($scope, $h
       data_value = parseInt(data_value);
       value = parseInt(value);
     }
+    if (metric_attr === 'author') {
+      data_value = _.pluck(data_value, 'name').join(',');
+    }
     switch (this.allMeasures[condition.measure_id]) {
       case '=':
         return data_value === value;

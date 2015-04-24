@@ -59,6 +59,9 @@ angular.module 'sightApp'
 		if metric_attr == 'cite_count'
 			data_value = parseInt(data_value)
 			value = parseInt(value)
+
+		if metric_attr == 'author'
+			data_value = _.pluck(data_value,'name').join(',')
 		
 		switch @allMeasures[condition.measure_id]
 			when '=' then return data_value == value

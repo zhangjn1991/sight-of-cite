@@ -3,6 +3,7 @@ angular.module('sightApp').controller("GlobalController", function($scope) {
   this.tabIndex = 0;
   this.infoBarCtrl = null;
   this.tableViewCtrl = null;
+  this.initialGraphPaperId = null;
   this.getServerAddr = function() {
     return "../back-end/api.php";
   };
@@ -22,6 +23,15 @@ angular.module('sightApp').controller("GlobalController", function($scope) {
     } else if (this.tabIndex === 3) {
       return this.infoBarCtrl.setIsReference(false);
     }
+  };
+  this.switchView = function() {
+    var target;
+    target = 'table';
+    if (window.location.href.indexOf('table') > -1) {
+      target = 'graph';
+      this.initialGraphPaperId = this.tableViewCtrl.activeRowEntity.pub_id;
+    }
+    return window.location.href = "#/" + target;
   };
   return 0;
 });

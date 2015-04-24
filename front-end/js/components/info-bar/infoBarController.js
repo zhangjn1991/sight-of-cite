@@ -10,48 +10,6 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
   this.currentCitationList = [];
   this.citationEntity = {};
   this.isReference = true;
-  this.testReferenes = [
-    {
-      pub_id: 1,
-      title: "Test Refereces 1",
-      note_content: "Test Note",
-      rating: 5,
-      note_date: 1429863767
-    }, {
-      pub_id: 2,
-      title: "Test Refereces 2",
-      note_content: "Test Note",
-      rating: 3,
-      note_date: 1429863767
-    }, {
-      pub_id: 3,
-      title: "Test Refereces 3",
-      note_content: "Test Note",
-      rating: 1,
-      note_date: 1429863767
-    }
-  ];
-  this.testCitedbys = [
-    {
-      pub_id: 1,
-      title: "Test Citedbys 1",
-      note_content: "Test Note",
-      rating: 1,
-      note_date: 1429863767
-    }, {
-      pub_id: 2,
-      title: "Test Citedbys 2",
-      note_content: "Test Note",
-      rating: 3,
-      note_date: 1429863767
-    }, {
-      pub_id: 3,
-      title: "Test Citedbys 3",
-      note_content: "Test Note",
-      rating: 2,
-      note_date: 1429863767
-    }
-  ];
   this.startEdit = function() {
     this.tempEntityDetail = this.tempEntityDetail || {};
     this.overwriteObject(this.entity, this.tempEntityDetail);
@@ -106,7 +64,8 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
   };
   this.setCitationList = function(entity) {
     if ((entity != null)) {
-      return this.currentCitationList = this.isReference ? this.testReferenes : this.testCitedbys;
+      this.currentCitationList = this.isReference ? entity.references : entity.citedbys;
+      return this.currentCitationList = _.flatten(this.currentCitationList);
     }
   };
   this.setCitationEntity = function(entity) {
@@ -115,6 +74,25 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
   this.setIsReference = function(isReference) {
     this.isReference = isReference;
     return this.setCitationList(this.entity);
+  };
+  this.saveCitationNote = function() {
+    var data;
+    data = {
+      pub_id_1: this.entity.pub_id,
+      pub_id_2: this.citationEntity.pub_id,
+      note_content: this.citationEntity.note_content,
+      rating: this.citationEntity.note_rating,
+      date: null
+    };
+    return $.post($scope.globalCtrl.getServerAddr(), {
+      action: 'update_note_by_paper_ids',
+      data: data
+    }, function(res) {
+      return console.log(res);
+    });
+  };
+  this.isInvalidCitation = function(citation) {
+    return citation.pub_id === this.entity.pub_id;
   };
   return 0;
 });

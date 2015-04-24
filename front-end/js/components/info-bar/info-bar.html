@@ -28,7 +28,7 @@
 			</section>
 			<section>
 				<h2>Conference</h2>
-				<p>{{infoBarCtrl.entity.conference}}</p>
+				<p>{{infoBarCtrl.entity.location}}</p>
 			</section>
 			<section>
 				<h2>Tags</h2>
@@ -93,6 +93,11 @@
 		</section>
 	</div>
 	<div class="content-container citation-container" ng-show="globalCtrl.tabIndex == 2 || globalCtrl.tabIndex == 3">
+		<div class="button-container">
+			<div class="button tick" ng-click="infoBarCtrl.saveCitationNote()">
+					<div></div>
+			</div>
+		</div>
 		<h1>{{globalCtrl.tabIndex == 2? "Reference" : "Cited by"}}</h1>		
 		<section>
 			<div class="cite-container">
@@ -101,9 +106,9 @@
 						<div class="rating">Rating</div>
 						<div class="title">Title</div>
 					</div> -->
-					<div class="cite-row" ng-class="{'active':citation == infoBarCtrl.citationEntity}" ng-repeat="citation in infoBarCtrl.currentCitationList" ng-click="infoBarCtrl.setCitationEntity(citation)">
-						<div class="rating">{{citation.rating}}</div>
-						<div class="title">{{citation.title}}</div>
+					<div class="cite-row" ng-class="{'active':citation == infoBarCtrl.citationEntity}" ng-repeat="citation in infoBarCtrl.currentCitationList" ng-click="infoBarCtrl.setCitationEntity(citation)" ng-hide="infoBarCtrl.isInvalidCitation(citation)">
+						<div class="rating">{{citation.pub_id}}</div>
+						<div class="title">{{citation.pub_title}}</div>
 					</div>					
 				</div>
 			</div>
@@ -114,7 +119,7 @@
 		</section>
 		<section>
 			<h2>Rating</h2>
-			<textarea id="cite_rating" placeholder="Rate from 1 to 5" ng-model="infoBarCtrl.citationEntity.rating"></textarea>
+			<textarea id="cite_rating" placeholder="Rate from 1 to 5" ng-model="infoBarCtrl.citationEntity.note_rating"></textarea>
 		</section>
 		
 		<section>

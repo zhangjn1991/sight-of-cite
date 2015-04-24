@@ -15,54 +15,6 @@ angular.module 'sightApp'
 
 	@isReference = true;
 
-	@testReferenes = [
-		{
-			pub_id:1
-			title:"Test Refereces 1"
-			note_content: "Test Note"
-			rating: 5
-			note_date: 1429863767
-		},
-		{
-			pub_id:2
-			title:"Test Refereces 2"
-			note_content: "Test Note"
-			rating: 3
-			note_date: 1429863767
-		},
-		{
-			pub_id:3
-			title:"Test Refereces 3"
-			note_content: "Test Note"
-			rating: 1
-			note_date: 1429863767
-		}
-	]
-
-	@testCitedbys = [
-		{
-			pub_id:1
-			title:"Test Citedbys 1"
-			note_content: "Test Note"
-			rating: 1
-			note_date: 1429863767
-		},
-		{
-			pub_id:2
-			title:"Test Citedbys 2"
-			note_content: "Test Note"
-			rating: 3
-			note_date: 1429863767
-		},
-		{
-			pub_id:3
-			title:"Test Citedbys 3"
-			note_content: "Test Note"
-			rating: 2
-			note_date: 1429863767
-		}
-	]
-
 	@startEdit = ()->
 		@tempEntityDetail = @tempEntityDetail || {}
 		@overwriteObject @entity, @tempEntityDetail
@@ -112,7 +64,8 @@ angular.module 'sightApp'
 
 	@setCitationList = (entity)->
 		if(entity?)
-			@currentCitationList = if @isReference then @testReferenes else @testCitedbys
+			@currentCitationList = if @isReference then entity.references else entity.citedbys
+			@currentCitationList = _.flatten(@currentCitationList)
 
 	@setCitationEntity = (entity)->
 		@citationEntity = entity
@@ -122,5 +75,19 @@ angular.module 'sightApp'
 		@isReference = isReference
 		@setCitationList(@entity)
 
+	@saveCitationNote = ()->
+		data = {
+			pub_id_1:@entity.pub_id
+			pub_id_2:@citationEntity.pub_id
+			note_content:@citationEntity.note_content
+			rating:@citationEntity.note_rating
+			date:null
+		}
+		$.post($scope.globalCtrl.getServerAddr(),{action:'update_note_by_paper_ids',data:data},(res)->console.log res)
+
+	@isInvalidCitation = (citation)->
+		return citation.pub_id == @entity.pub_id
+	
+	
 
 	0

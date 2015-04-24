@@ -6,6 +6,9 @@
 		<div class="button trash" ng-click="globalCtrl.removeSelectedPublication()">
 			<div></div>
 		</div>
+		<div class="button" ng-click="globalCtrl.switchView()">
+			<div></div>
+		</div>
 	</div>
 	<ul class="tab-container">
 		<li class="tab" ng-repeat="tab in headerCtrl.tabs" ng-class="{active:headerCtrl.isCurrentTab($index)}" ng-click="headerCtrl.setTab($index)"><span>{{tab}}</span></li>
