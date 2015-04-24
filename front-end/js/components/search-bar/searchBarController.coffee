@@ -1,5 +1,6 @@
 angular.module 'sightApp'
 .controller 'SearchBarController', ($scope,$http)->
+	self = @
 	@allCollections = [
 		{
 			name:"Thesis",
@@ -18,7 +19,14 @@ angular.module 'sightApp'
 			count:30
 		}
 	]
-	@allNames = ['Metric','Title','Author','Year','Conference']
+	@allMetrics = [
+		{name:'Metric',attr:'unknow'},
+		{name:'Title',attr:'title'},
+		{name:'Author',attr:'author'},
+		{name:'Citation',attr:'cite_count'},
+		{name:'Tag',attr:'tag'},
+		{name:'Location',attr:'location'}
+	]
 	@allMeasures = ['Relation','>','<','Has','=']
 	@allConditions = [
 		# {
@@ -40,13 +48,31 @@ angular.module 'sightApp'
 	@removeCondition = (index)->
 		@allConditions.splice index,1
 	@addCondition = ()->
-		@allConditions.push({name_id:0, measure_id:0, value:""})
+		@allConditions.push({metric_id:0, measure_id:0, value:""})
+
 	
+	@isConditionTrue = (d,condition)->
+		metric_attr = @allMetrics[condition.metric_id].attr
+		data_value = d[metric_attr]
+		value = condition.value;
+
+		if metric_attr == 'cite_count'
+			data_value = parseInt(data_value)
+			value = parseInt(value)
+		
+		switch @allMeasures[condition.measure_id]
+			when '=' then return data_value == value
+			when '<' then return data_value < value
+			when '>' then return data_value > value
+			when 'Has' then return _.isString(data_value) && data_value? && data_value.indexOf(value) > -1
+		
 	@search = ()->
-		value = if _.isEmpty @allConditions then '' else @allConditions[0].value		 
-		$http.get($scope.globalCtrl.getServerAddr()+"?action=search_by_title&title=#{ value }").success (data)-> 
-			console.log data		
-			$scope.globalCtrl.tableViewCtrl.setData(data)
+		data = $scope.globalCtrl.tableViewCtrl.allData;
+		res = data
+		_.each(self.allConditions, (condition)->
+			res = _.filter res,(d)->self.isConditionTrue(d,condition)
+		)
+		$scope.globalCtrl.tableViewCtrl.setData(res)
 
 
 	0

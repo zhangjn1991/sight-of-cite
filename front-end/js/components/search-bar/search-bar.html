@@ -24,8 +24,8 @@
 	<div class="condition-container">
 		<section class="condition" ng-repeat="condition in searchBarCtrl.allConditions">
 			<form action="" id="condition-form">
-				<select form="condidition-form" ng-model="condition.name_id">	
-					<option ng-selected="$index == condition.name_id" ng-disabled="$index == 0" value="{{$index}}" ng-repeat="name in searchBarCtrl.allNames">{{name}}</option>	
+				<select form="condidition-form" ng-model="condition.metric_id">	
+					<option ng-selected="$index == condition.metric_id" ng-disabled="$index == 0" value="{{$index}}" ng-repeat="metric in searchBarCtrl.allMetrics">{{metric.name}}</option>	
 				</select>
 				<select name="" id="measure" ng-model="condition.measure_id">
 					<option ng-selected="$index == condition.measure_id" ng-disabled="$index == 0" value="{{$index}}" ng-repeat="measure in searchBarCtrl.allMeasures">{{measure}}</option>	

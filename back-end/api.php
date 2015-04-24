@@ -493,10 +493,13 @@ function getPaperByPubId( $pub_id ) {
 			// 		NATURAL JOIN Cite");
 			$sql = ("SELECT Publication.pub_id AS pub_id, 
 				Publication.pub_title AS title, 
+				Publication.pub_cite_count AS cite_count, 
+				Publication.pub_location AS location, 
 				Publication.pub_year AS pub_year,
 				Publication.pub_ISBN AS ISBN,
 				Publication.pub_abstract AS abstract,
 				GROUP_CONCAT( DISTINCT Author.auth_name SEPARATOR ',' ) AS authorNames, 
+<<<<<<< HEAD
 				GROUP_CONCAT( DISTINCT Author.auth_id SEPARATOR ',' ) AS authorIds, 
 				GROUP_CONCAT( DISTINCT Cite.citer_id SEPARATOR ',' ) AS citerIds, 
 				GROUP_CONCAT( DISTINCT Cite.citee_id SEPARATOR ',' ) AS citeeIds
@@ -506,6 +509,12 @@ function getPaperByPubId( $pub_id ) {
 					JOIN Cite ON Publication.pub_id = Cite.citee_id OR Publication.pub_id = Cite.citer_id 
 					LEFT OUTER JOIN Tag_of ON Tag_of.pub_id = Publication.pub_id 
                     LEFT OUTER JOIN Tag ON Tag.tag_id = Tag_of.tag_id ");
+=======
+				GROUP_CONCAT( DISTINCT Author.auth_id SEPARATOR ',' ) AS authorIds								
+				FROM Author 
+					NATURAL JOIN Author_of 
+					NATURAL JOIN Publication 					");
+>>>>>>> origin/master
 
 		if ( $pub_id == "getAll" ) {	// SPECIAL CASE: get all paper
 			$sql = $sql." GROUP BY Publication.pub_id";
@@ -531,6 +540,7 @@ function getPaperByPubId( $pub_id ) {
 				$result[$resultCount]->author[$i] = $authorObj;
 			}
 
+<<<<<<< HEAD
 			$result[$resultCount]->citerIds = explode(',', $result[$resultCount]->citerIds);
 			for ($i = 0; $i < sizeof($result[$resultCount]->citerIds); $i++) {
 				$citerPaperObj = new stdClass;
@@ -545,11 +555,12 @@ function getPaperByPubId( $pub_id ) {
 				$citeePaperObj = getCiteeInfo( $result[$resultCount]->citeeIds[$i], $pub_id );
 				$result[$resultCount]->references[$i] = $citeePaperObj;
 			}
+=======
+			
+>>>>>>> origin/master
 
 			unset( $result[$resultCount]->authorNames );
-			unset( $result[$resultCount]->authorIds );
-			unset( $result[$resultCount]->citerIds );
-			unset( $result[$resultCount]->citeeIds );
+			unset( $result[$resultCount]->authorIds );			
 
 		}
 
