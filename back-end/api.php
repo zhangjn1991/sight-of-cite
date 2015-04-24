@@ -504,7 +504,7 @@ function getPaperByPubId( $pub_id ) {
 				FROM Author 
 					NATURAL JOIN Author_of 
 					NATURAL JOIN Publication 
-					JOIN Cite ON Publication.pub_id = Cite.citee_id OR Publication.pub_id = Cite.citer_id 
+					LEFT OUTER JOIN Cite ON Publication.pub_id = Cite.citee_id OR Publication.pub_id = Cite.citer_id 
 					LEFT OUTER JOIN Tag_of ON Tag_of.pub_id = Publication.pub_id 
                     LEFT OUTER JOIN Tag ON Tag.tag_id = Tag_of.tag_id ");
 
