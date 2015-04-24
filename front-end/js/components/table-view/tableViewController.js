@@ -3,6 +3,7 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
   var self;
   self = this;
   $scope.globalCtrl.tableViewCtrl = this;
+  this.allData = [];
   this.activeRowEntity = null;
   this.setActiveRow = function(entity) {
     this.activeRowEntity = entity;
@@ -72,7 +73,7 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
     return this.gridOptions.data = data;
   };
   $http.get($scope.globalCtrl.getServerAddr() + '?action=get_all_paper').success(function(data) {
-    console.log(data);
+    self.allData = data;
     return self.setData(data);
   });
   return 0;

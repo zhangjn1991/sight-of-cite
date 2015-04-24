@@ -3,6 +3,7 @@ angular.module "sightApp"
 	self=@
 	$scope.globalCtrl.tableViewCtrl = @
 
+	@allData = []
 
 	@activeRowEntity = null		
 
@@ -48,7 +49,7 @@ angular.module "sightApp"
 
 	# $http.get('data/publication.json').success (data)-> self.gridOptions.data = data.slice(0,5);
 	$http.get($scope.globalCtrl.getServerAddr()+'?action=get_all_paper').success (data)-> 
-		console.log data		
+		self.allData = data
 		self.setData(data)
 
 
