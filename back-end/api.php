@@ -374,7 +374,7 @@ function updateNoteByPaperIds( $citerId, $citeeId, $noteContent, $noteRating, $n
 
 		$noteId = checkCite( $citerId, $citeeId );
 
-		if ( $noteId ) {	// the aimed note doesn't exist
+		if ( empty($noteId) ) {	// the aimed note doesn't exist
 			return null;
 		}
 
