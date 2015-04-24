@@ -550,6 +550,13 @@ function getPaperByPubId( $pub_id ) {
 				$result[$resultCount]->references[$i] = $citeePaperObj;
 			}
 
+			$result[$resultCount]->tags = explode(',', $result[$resultCount]->tags);
+			// for ($i = 0; $i < sizeof($result[$resultCount]->tags); $i++) {
+			// 	$citeePaperObj = new stdClass;
+			// 	$citeePaperObj = getCiteeInfo( , $result[$resultCount]->pub_id );
+			// 	$result[$resultCount]->tags[$i] = $result[$resultCount]->citeeIds[$i]
+			// }
+
 			unset( $result[$resultCount]->authorNames );
 			unset( $result[$resultCount]->authorIds );
 			unset( $result[$resultCount]->authorMSids );
