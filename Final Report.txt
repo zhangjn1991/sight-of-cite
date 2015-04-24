@@ -1,0 +1,21 @@
+Final Report
+
+PART I Brief description of accomplishments
+A personal web application--"Sight of Cite" for managing publications has been developed. It provides the user a friendly interface for performing insertion, updating, searching and deletion in the personal library. An interactive graphic has been developed to show the relationship and inter-citation among the user's collection.
+
+PART II Discuss the usefulness of the project
+
+
+PART III Discuss the data in the database
+
+PART IV
+
+PART V
+
+PART VI
+
+PART VII
+
+PART VIII
+
+PART IX
