@@ -327,7 +327,7 @@ function searchPaperByAttrs( $attrObj ) {
 }
 
 // API 05
-function addNoteByPaperIds( $citerId, $citeeId, $noteContent ) {	// return note_id if succeed, else null
+function addNoteByPaperIds( $citerId, $citeeId, $noteContent, $noteRating, $noteDate ) {	// return note_id if succeed, else null
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
