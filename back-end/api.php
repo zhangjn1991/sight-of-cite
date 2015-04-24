@@ -43,6 +43,9 @@ if ($_SERVER ['REQUEST_METHOD'] == 'GET') {		// QUERY
 			case "get_cite":	// API 14
 				$value = getCite();
 				break;
+			case "test":
+				$value = getCiterInfo( $_GET["citer_id"], $_GET["citee_id"] );
+				break;
 			default :
 				$value = 'Error input.';
 		endswitch;
@@ -486,7 +489,7 @@ function getPaperByPubId( $pub_id ) {
 				Publication.pub_title AS title, 
 				Publication.pub_year AS pub_year,
 				Publication.pub_ISBN AS ISBN,
-				Publicatoin.pub_cite_count AS cite_count,
+				Publication.pub_cite_count AS cite_count,
 				Publication.pub_location AS location,
 				Publication.pub_abstract AS abstract,
 				GROUP_CONCAT( DISTINCT Author.auth_name SEPARATOR ',' ) AS authorNames, 
@@ -755,21 +758,27 @@ function getCiterInfo( $citerId, $citeeId ) {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		// $noteId = checkCite( $citerId, $citeeId );
+		$noteId = checkCite( $citerId, $citeeId );
 
-		// $sql = ("SELECT Publication.pub_id, Publication.pub_title, Note.note_content, Note.note_rating, Note.note_date
-		// 		FROM Publication, Note
-		// 		WHERE Publication.pub_id = :citer_id AND Note.note_id = :note_id");
-		$sql = ("SELECT Publication.pub_id, Publication.pub_title
+
+		if ( empty($noteId) ) {
+			$sql = ("SELECT Publication.pub_id, Publication.pub_title
 				FROM Publication
 				WHERE Publication.pub_id = :citer_id ");
-
-		$stmt = $conn->prepare( $sql );
+			$stmt = $conn->prepare( $sql );
+		} else {
+			$sql = ("SELECT Publication.pub_id, Publication.pub_title, Note.note_content, Note.note_rating, Note.note_date
+					FROM Publication, Note
+					WHERE Publication.pub_id = :citer_id AND Note.note_id = :note_id");
+			$stmt = $conn->prepare( $sql );
+			$stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
+			
+		}
+		
 		$stmt->bindParam(":citer_id", $citerId, PDO::PARAM_INT);
-		// $stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
 		$stmt->execute();
-		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
-
+		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );	
+	
 		return $result;
 
 	} catch ( PDOException $e ) {
@@ -787,19 +796,22 @@ function getCiteeInfo( $citeeId, $citerId ) {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		// $noteId = checkCite( $citerId, $citeeId );
+		$noteId = checkCite( $citerId, $citeeId );
 
-		// $sql = ("SELECT Publication.pub_id, Publication.pub_title, Note.note_content, Note.note_rating, Note.note_date
-		// 		FROM Publication, Note
-		// 		WHERE Publication.pub_id = :citer_id AND Note.note_id = :note_id");
+		if ( empty($noteId) ) {
+			$sql = ("SELECT Publication.pub_id, Publication.pub_title
+					FROM Publication
+					WHERE Publication.pub_id = :citee_id");
+			$stmt = $conn->prepare( $sql );
+		} else {
+			$sql = ("SELECT Publication.pub_id, Publication.pub_title, Note.note_content, Note.note_rating, Note.note_date
+					FROM Publication, Note
+					WHERE Publication.pub_id = :citer_id AND Note.note_id = :note_id");
+			$stmt = $conn->prepare( $sql );
+			$stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
+		}
 
-		$sql = ("SELECT Publication.pub_id, Publication.pub_title
-				FROM Publication
-				WHERE Publication.pub_id = :citee_id");
-
-		$stmt = $conn->prepare( $sql );
 		$stmt->bindParam(":citee_id", $citeeId, PDO::PARAM_INT);
-		// $stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
 		$stmt->execute();
 		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
 
@@ -970,7 +982,7 @@ function translateRelation( $relation ) {
 	return $result;
 }
 
-function checkCite( $citerId, $citeeId ) {		// Check the passed citee & citer ids, new->true, existed->note_id
+function checkCite( $citerId, $citeeId ) {		// Check the passed citee & citer ids, new->empty, existed->note_id
 	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
 		
 	try {
@@ -982,14 +994,14 @@ function checkCite( $citerId, $citeeId ) {		// Check the passed citee & citer id
 
 		$stmt = $conn->prepare( $sql );
 		$stmt->bindParam(":citee_id", $citeeId, PDO::PARAM_INT);
-		$stmt->bindParam(":citer_id", $citer_id, PDO::PARAM_INT);
+		$stmt->bindParam(":citer_id", $citerId, PDO::PARAM_INT);
 		$stmt->execute();
 		$result = $stmt->fetch ( PDO::FETCH_ASSOC );
 
 		if ( empty($result) ) {	// no records in Tag_of
-			return true;
+			return ;
 		} else {	// this tag still has records in Tag_of
-			return $result;
+			return $result["note_id"];
 		}
 
 	} catch ( PDOException $e ) {
