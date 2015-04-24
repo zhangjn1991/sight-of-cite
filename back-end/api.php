@@ -171,15 +171,29 @@ function addPaper($paperObj) {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		$sql = ("INSERT INTO Publication (pub_id, pub_title, pub_year, pub_cite_count, pub_ISBN)
-				VALUES (:pub_id, :title, :pub_year, :cite_count, :ISBN)");
+		foreach ($paperObj['location'] as $number => $pair) {
+			foreach ($pair as $key => $loc_name) {
+				$findLocId = checkLocation( $loc_name );
+				if ( empty($findLocId) ) {
+					$NEW_LOC_ID = insertLocation( $loc_name );
+					$loc_id = $NEW_LOC_ID;
+				} else {
+					$loc_id = $findLocId;
+				}
+			}
+		}
+
+		$sql = ("INSERT INTO Publication (pub_id, pub_title, pub_year, pub_cite_count, pub_ISBN, loc_id, pub_abstract)
+				VALUES (:pub_id, :title, :pub_year, :cite_count, :ISBN, :loc_id, :pub_abstract)");
 
 		$stmt = $conn->prepare ( $sql );
-		$stmt->bindParam(":pub_id", $NEW_PUB_ID, PDO::PARAM_INT);		
+		$stmt->bindParam(":pub_id", $NEW_PUB_ID, PDO::PARAM_INT);
 		$stmt->bindParam(":title", $paperObj['title'], PDO::PARAM_STR );
 		$stmt->bindParam(":pub_year", $paperObj['pub_year'], PDO::PARAM_INT);
 		$stmt->bindParam(":cite_count", $paperObj['cite_count'], PDO::PARAM_INT);
 		$stmt->bindParam(":ISBN", $paperObj['ISBN'], PDO::PARAM_STR );
+		$stmt->bindParam(":pub_abstract", $paperObj['abstract'], PDO::PARAM_STR);
+		$stmt->bindParam(":loc_id", $loc_id, PDO::PARAM_INT);
 		$stmt->execute();
 
 		foreach ($paperObj['author'] as $number => $pair) {	// Check & Update Author, Author_of
@@ -194,17 +208,7 @@ function addPaper($paperObj) {
 			}
 		}
 
-		foreach ($paperObj['location'] as $number => $pair) {
-			foreach ($pair as $key => $loc_name) {
-				$findLocId = checkLocation( $loc_name );
-				if ( empty($findLocId) ) {
-					$NEW_LOC_ID = insertLocation( $loc_name );
-					$loc_id = $NEW_LOC_ID;
-				} else {
-					$loc_id = $findLocId;
-				}
-			}
-		}
+
 
 		return array("pub_id" => $NEW_PUB_ID);
 
@@ -231,7 +235,8 @@ function updatePaper($paperObj) {
 					pub_title = :title,
 					pub_year = :pub_year,
 					pub_cite_count = :cite_count,
-					pub_ISBN = :ISBN
+					pub_ISBN = :ISBN,
+					pub_abstract = :pub_abstract
 				WHERE pub_id = :pub_id 
 				";
 		$stmt = $conn->prepare($sql);
@@ -240,6 +245,7 @@ function updatePaper($paperObj) {
 		$stmt->bindParam(":pub_year", $paperObj['pub_year'], PDO::PARAM_INT);
 		$stmt->bindParam(":cite_count", $paperObj['cite_count'], PDO::PARAM_INT);
 		$stmt->bindParam(":ISBN", $paperObj['ISBN'], PDO::PARAM_STR );
+		$stmt->bindParam(":pub_abstract", $paperObj['abstract'], PDO::PARAM_STR);
 		$stmt->execute ();
 		return true;
 	} catch ( PDOException $e ) {
