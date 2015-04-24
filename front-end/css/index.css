@@ -217,6 +217,37 @@ header {
     pointer-events: auto; }
   .info-bar .note-container textarea {
     height: 25em; }
+  .info-bar .citation-container #cite_rating {
+    height: 2.5em; }
+  .info-bar .citation-container #cite_note {
+    height: 6em; }
+  .info-bar .citation-container .cite-container {
+    height: 12em;
+    overflow: scroll;
+    border: 1px solid rgba(192, 204, 213, 0.5);
+    color: #5d7b92;
+    cursor: pointer;
+    margin: 0.5em; }
+    .info-bar .citation-container .cite-container .cite-row {
+      display: flex; }
+      .info-bar .citation-container .cite-container .cite-row:nth-child(odd) {
+        background: #f4f5f7; }
+      .info-bar .citation-container .cite-container .cite-row:nth-child(even) {
+        background: #e5e8ec; }
+      .info-bar .citation-container .cite-container .cite-row:hover {
+        background: rgba(96, 123, 141, 0.1); }
+      .info-bar .citation-container .cite-container .cite-row.active {
+        background: #6ba7d5;
+        color: #f9fafb; }
+      .info-bar .citation-container .cite-container .cite-row.header {
+        background: #5d7b92;
+        color: #f9fafb;
+        font-size: 0.7em; }
+      .info-bar .citation-container .cite-container .cite-row div {
+        padding: 0.5em 5px; }
+      .info-bar .citation-container .cite-container .cite-row .rating {
+        font-weight: 400;
+        width: 30px; }
 
 .search-bar {
   display: flex;

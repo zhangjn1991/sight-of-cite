@@ -2,10 +2,56 @@
 angular.module('sightApp').controller("InfoBarController", function($scope) {
   var self;
   self = this;
-  $scope.globalCtrl.infobarCtrl = this;
+  $scope.globalCtrl.infoBarCtrl = this;
+  this.tabIndex = 0;
   this.entity = {};
   this.isEditing = false;
   this.tempEntityDetail = null;
+  this.currentCitationList = [];
+  this.citationEntity = {};
+  this.isReference = true;
+  this.testReferenes = [
+    {
+      pub_id: 1,
+      title: "Test Refereces 1",
+      note_content: "Test Note",
+      rating: 5,
+      note_date: 1429863767
+    }, {
+      pub_id: 2,
+      title: "Test Refereces 2",
+      note_content: "Test Note",
+      rating: 3,
+      note_date: 1429863767
+    }, {
+      pub_id: 3,
+      title: "Test Refereces 3",
+      note_content: "Test Note",
+      rating: 1,
+      note_date: 1429863767
+    }
+  ];
+  this.testCitedbys = [
+    {
+      pub_id: 1,
+      title: "Test Citedbys 1",
+      note_content: "Test Note",
+      rating: 1,
+      note_date: 1429863767
+    }, {
+      pub_id: 2,
+      title: "Test Citedbys 2",
+      note_content: "Test Note",
+      rating: 3,
+      note_date: 1429863767
+    }, {
+      pub_id: 3,
+      title: "Test Citedbys 3",
+      note_content: "Test Note",
+      rating: 2,
+      note_date: 1429863767
+    }
+  ];
   this.startEdit = function() {
     this.tempEntityDetail = this.tempEntityDetail || {};
     this.overwriteObject(this.entity, this.tempEntityDetail);
@@ -36,6 +82,8 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
     this.entity = entity;
     if (this.isNewEntity(entity)) {
       return this.startEdit();
+    } else {
+      return this.setCitationList(entity);
     }
   };
   this.removeCurrentEntity = function() {
@@ -52,6 +100,21 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
   };
   this.isNewEntity = function(entity) {
     return !((entity != null) && (entity.pub_id != null));
+  };
+  this.setTabIndex = function(index) {
+    return this.tabIndex = index;
+  };
+  this.setCitationList = function(entity) {
+    if ((entity != null)) {
+      return this.currentCitationList = this.isReference ? this.testReferenes : this.testCitedbys;
+    }
+  };
+  this.setCitationEntity = function(entity) {
+    return this.citationEntity = entity;
+  };
+  this.setIsReference = function(isReference) {
+    this.isReference = isReference;
+    return this.setCitationList(this.entity);
   };
   return 0;
 });

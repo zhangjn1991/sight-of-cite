@@ -6,7 +6,7 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
   this.activeRowEntity = null;
   this.setActiveRow = function(entity) {
     this.activeRowEntity = entity;
-    return $scope.globalCtrl.infobarCtrl.setCurrentEntity(entity);
+    return $scope.globalCtrl.infoBarCtrl.setCurrentEntity(entity);
   };
   this.addEmptyRow = function() {
     var newEntity;
@@ -22,7 +22,7 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
       return;
     }
     this.removeFromArray(this.gridOptions.data, this.activeRowEntity);
-    $scope.globalCtrl.infobarCtrl.removeCurrentEntity();
+    $scope.globalCtrl.infoBarCtrl.removeCurrentEntity();
     console.log("AJAX: delete_paper");
     return $.post($scope.globalCtrl.getServerAddr(), {
       action: "delete_paper",

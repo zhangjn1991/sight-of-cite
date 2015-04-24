@@ -2,10 +2,10 @@
 angular.module('sightApp').controller("HeaderController", function($scope) {
   this.tabs = ['Detail', 'Notes', 'Reference', 'Cited by'];
   this.isCurrentTab = function(index) {
-    return $scope.globalCtrl.tabIndex === index;
+    return $scope.globalCtrl.getTabIndex() === index;
   };
   this.setTab = function(index) {
-    return $scope.globalCtrl.tabIndex = index;
+    return $scope.globalCtrl.setTabIndex(index);
   };
   return 0;
 });

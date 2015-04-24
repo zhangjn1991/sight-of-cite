@@ -91,6 +91,35 @@
 		<section>
 			<textarea name="" id="">{{infoBarCtrl.entity.comment}}</textarea>
 		</section>
-
+	</div>
+	<div class="content-container citation-container" ng-show="globalCtrl.tabIndex == 2 || globalCtrl.tabIndex == 3">
+		<h1>{{globalCtrl.tabIndex == 2? "Reference" : "Cited by"}}</h1>		
+		<section>
+			<div class="cite-container">
+				<div class="cite-table">
+					<!-- <div class="cite-row header">
+						<div class="rating">Rating</div>
+						<div class="title">Title</div>
+					</div> -->
+					<div class="cite-row" ng-class="{'active':citation == infoBarCtrl.citationEntity}" ng-repeat="citation in infoBarCtrl.currentCitationList" ng-click="infoBarCtrl.setCitationEntity(citation)">
+						<div class="rating">{{citation.rating}}</div>
+						<div class="title">{{citation.title}}</div>
+					</div>					
+				</div>
+			</div>
+		</section>
+		<section>
+			<h2>Date</h2>
+			<p>{{inforBarCtrl.citationEntity.note_date}}</p>
+		</section>
+		<section>
+			<h2>Rating</h2>
+			<textarea id="cite_rating" placeholder="Rate from 1 to 5" ng-model="infoBarCtrl.citationEntity.rating"></textarea>
+		</section>
+		
+		<section>
+			<h2>Note</h2>
+			<textarea id="cite_note" placeholder="Type citation note" ng-model="infoBarCtrl.citationEntity.note_content"></textarea>
+		</section>
 	</div>
 </div>

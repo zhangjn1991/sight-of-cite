@@ -1,13 +1,67 @@
 angular.module 'sightApp'
 .controller "InfoBarController", ($scope)->
 	self = @
-	$scope.globalCtrl.infobarCtrl = @;
+	$scope.globalCtrl.infoBarCtrl = @;
+	@tabIndex = 0
 
 	@entity={};
 
 	@isEditing=false;
 
 	@tempEntityDetail = null;
+	
+	@currentCitationList = [];
+	@citationEntity = {}	
+
+	@isReference = true;
+
+	@testReferenes = [
+		{
+			pub_id:1
+			title:"Test Refereces 1"
+			note_content: "Test Note"
+			rating: 5
+			note_date: 1429863767
+		},
+		{
+			pub_id:2
+			title:"Test Refereces 2"
+			note_content: "Test Note"
+			rating: 3
+			note_date: 1429863767
+		},
+		{
+			pub_id:3
+			title:"Test Refereces 3"
+			note_content: "Test Note"
+			rating: 1
+			note_date: 1429863767
+		}
+	]
+
+	@testCitedbys = [
+		{
+			pub_id:1
+			title:"Test Citedbys 1"
+			note_content: "Test Note"
+			rating: 1
+			note_date: 1429863767
+		},
+		{
+			pub_id:2
+			title:"Test Citedbys 2"
+			note_content: "Test Note"
+			rating: 3
+			note_date: 1429863767
+		},
+		{
+			pub_id:3
+			title:"Test Citedbys 3"
+			note_content: "Test Note"
+			rating: 2
+			note_date: 1429863767
+		}
+	]
 
 	@startEdit = ()->
 		@tempEntityDetail = @tempEntityDetail || {}
@@ -36,7 +90,14 @@ angular.module 'sightApp'
 
 	@setCurrentEntity = (entity)->
 		@entity = entity;
-		if @isNewEntity(entity) then @startEdit()
+
+		if @isNewEntity(entity)
+		 	@startEdit()
+		else
+			@setCitationList(entity)
+		
+
+
 	@removeCurrentEntity = ()->
 		@entity = {}
 
@@ -46,5 +107,20 @@ angular.module 'sightApp'
 			toObj[k]=v
 
 	@isNewEntity = (entity)-> !(entity? && entity.pub_id?)
+
+	@setTabIndex = (index)->@tabIndex=index
+
+	@setCitationList = (entity)->
+		if(entity?)
+			@currentCitationList = if @isReference then @testReferenes else @testCitedbys
+
+	@setCitationEntity = (entity)->
+		@citationEntity = entity
+  	
+
+	@setIsReference = (isReference)->
+		@isReference = isReference
+		@setCitationList(@entity)
+
 
 	0

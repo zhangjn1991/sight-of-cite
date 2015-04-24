@@ -12,5 +12,16 @@ angular.module('sightApp').controller("GlobalController", function($scope) {
   this.removeSelectedPublication = function() {
     return this.tableViewCtrl.removeActiveRow();
   };
+  this.getTabIndex = function() {
+    return this.tabIndex;
+  };
+  this.setTabIndex = function(index) {
+    this.tabIndex = index;
+    if (this.tabIndex === 2) {
+      return this.infoBarCtrl.setIsReference(true);
+    } else if (this.tabIndex === 3) {
+      return this.infoBarCtrl.setIsReference(false);
+    }
+  };
   return 0;
 });

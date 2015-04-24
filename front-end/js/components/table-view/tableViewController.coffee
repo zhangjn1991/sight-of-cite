@@ -8,7 +8,7 @@ angular.module "sightApp"
 
 	@setActiveRow = (entity)->
 		@activeRowEntity = entity
-		$scope.globalCtrl.infobarCtrl.setCurrentEntity entity;
+		$scope.globalCtrl.infoBarCtrl.setCurrentEntity entity;
 
 	@addEmptyRow = ()->
 		newEntity = {}
@@ -21,7 +21,7 @@ angular.module "sightApp"
 	@removeActiveRow = ()->
 		if(!@activeRowEntity?) then return
 		@removeFromArray(@gridOptions.data,@activeRowEntity)
-		$scope.globalCtrl.infobarCtrl.removeCurrentEntity()
+		$scope.globalCtrl.infoBarCtrl.removeCurrentEntity()
 
 		console.log "AJAX: delete_paper"
 		$.post($scope.globalCtrl.getServerAddr(),{action:"delete_paper",data:{pub_id:@activeRowEntity.pub_id}},(res)->
