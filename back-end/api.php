@@ -44,7 +44,7 @@ if ($_SERVER ['REQUEST_METHOD'] == 'GET') {		// QUERY
 				$value = getCite();
 				break;
 			case "test":
-				$value = getCiterInfo( $_GET["citer_id"], $_GET["citee_id"] );
+				$value = checkCite( $_GET["citer_id"], $_GET["citee_id"] );
 				break;
 			default :
 				$value = 'Error input.';
@@ -337,11 +337,12 @@ function addNoteByPaperIds( $citerId, $citeeId, $noteContent, $noteRating, $note
 
 		$noteId = checkCite( $citerId, $citeeId );
 		
-		if ($noteId) {	// no record -> insert entry into Cite, Note
+		if (empty($noteId)) {	// no record -> insert entry into Cite, Note
 			$noteId = getMaxId('note_id', 'Note') + 1;
 
-			$sql = ( "INSERT INTO Cite (citer_id, citee_id, note_id) 
-						VALUES (:citer_id, :citee_id, :note_id); 
+			$sql = ( "UPDATE Cite
+						SET note_id = :note_id
+						WHERE citer_id = :citer_id AND citee_id = :citee_id; 
 						INSERT INTO Note (note_id, note_content, note_rating, note_date)
 						VALUES (:note_id, :note_content, :note_rating, :note_date)" );
 
@@ -991,7 +992,6 @@ function checkCite( $citerId, $citeeId ) {		// Check the passed citee & citer id
 		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
 		$sql = ("SELECT note_id FROM Cite WHERE citee_id = :citee_id AND citer_id = :citer_id");
 
 		$stmt = $conn->prepare( $sql );
