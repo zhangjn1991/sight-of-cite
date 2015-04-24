@@ -188,8 +188,8 @@ function addPaper( $paperObj ) {
 			}
 		}
 
-		$sql = ("INSERT INTO Publication (pub_id, pub_title, pub_year, pub_cite_count, pub_ISBN, loc_id, pub_MSid, pub_abstract)
-				VALUES (:pub_id, :title, :pub_year, :cite_count, :ISBN, :loc_id, :pub_MSid, :pub_abstract)");
+		$sql = ("INSERT INTO Publication (pub_id, pub_title, pub_year, pub_cite_count, pub_ISBN, pub_location, pub_MSid, pub_abstract)
+				VALUES (:pub_id, :title, :pub_year, :cite_count, :ISBN, :pub_location, :pub_MSid, :pub_abstract)");
 
 		$stmt = $conn->prepare ( $sql );
 		$stmt->bindParam(":pub_id", $NEW_PUB_ID, PDO::PARAM_INT);
@@ -199,7 +199,7 @@ function addPaper( $paperObj ) {
 		$stmt->bindParam(":ISBN", $paperObj['ISBN'], PDO::PARAM_STR );
 		$stmt->bindParam(":pub_abstract", $paperObj['abstract'], PDO::PARAM_STR);
 		$stmt->bindParam(":pub_MSid", $paperObj['MSid'], PDO::PARAM_INT);
-		$stmt->bindParam(":loc_id", $loc_id, PDO::PARAM_INT);
+		$stmt->bindParam(":pub_location", $paperObj['location'], PDO::PARAM_STR);
 		$stmt->execute();
 
 		foreach ($paperObj['author'] as $number => $pair) {	// Check & Update Author, Author_of
@@ -496,7 +496,8 @@ function getPaperByPubId( $pub_id ) {
 				Publication.pub_location AS location,
 				Publication.pub_abstract AS abstract,
 				GROUP_CONCAT( DISTINCT Author.auth_name SEPARATOR ',' ) AS authorNames, 
-				GROUP_CONCAT( DISTINCT Author.auth_id SEPARATOR ',' ) AS authorIds, 
+				GROUP_CONCAT( DISTINCT Author.auth_id SEPARATOR ',' ) AS authorIds,
+				GROUP_CONCAT( DISTINCT Author.auth_MSid SEPARATOR ',' ) AS authorMSids, 
 				GROUP_CONCAT( DISTINCT Cite.citer_id SEPARATOR ',' ) AS citerIds, 
 				GROUP_CONCAT( DISTINCT Cite.citee_id SEPARATOR ',' ) AS citeeIds,
 				GROUP_CONCAT( DISTINCT Tag.tag_content SEPARATOR ',') AS tags
@@ -523,11 +524,13 @@ function getPaperByPubId( $pub_id ) {
 
 			$result[$resultCount]->authorNames = explode(',', $result[$resultCount]->authorNames);
 			$result[$resultCount]->authorIds = explode(',', $result[$resultCount]->authorIds);
+			$result[$resultCount]->authorMSids = explode(',', $result[$resultCount]->authorMSids);
 
 			for ($i = 0; $i < sizeof($result[$resultCount]->authorNames); $i++) {
 				$authorObj = new stdClass;
 				$authorObj->name = $result[$resultCount]->authorNames[$i];
 				$authorObj->id = $result[$resultCount]->authorIds[$i];
+				$authorObj->MSid = $result[$resultCount]->authorMSids[$i];
 				$result[$resultCount]->author[$i] = $authorObj;
 			}
 
@@ -547,6 +550,7 @@ function getPaperByPubId( $pub_id ) {
 
 			unset( $result[$resultCount]->authorNames );
 			unset( $result[$resultCount]->authorIds );
+			unset( $result[$resultCount]->authorMSids );
 			unset( $result[$resultCount]->citerIds );
 			unset( $result[$resultCount]->citeeIds );
 
