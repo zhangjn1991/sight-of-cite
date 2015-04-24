@@ -272,7 +272,9 @@ function deletePaperByPaperId( $pubId ) {
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 		$sql = ("DELETE FROM Publication 
-				WHERE pub_id = :pub_id"
+				WHERE pub_id = :pub_id;
+				DELETE FROM Author_of
+				WHERE pub_id = :pub_id;"
 				);
 
 		$stmt = $conn->prepare( $sql );
