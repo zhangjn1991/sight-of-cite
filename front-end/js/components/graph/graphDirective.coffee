@@ -1,7 +1,7 @@
 angular.module 'sightApp'
 .directive 'Graph', ()->
 	{
-		resstrict:'E',
+		restrict:'E',
 		scope: true,
 		templateUrl:'js/components/graph.html',
 		controller:'GraphController',

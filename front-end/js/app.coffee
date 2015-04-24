@@ -7,5 +7,7 @@ angular.module('sightApp',['ngTouch', 'ui.grid', 'ui.grid.resizeColumns', 'ui.gr
 			templateUrl:'partials/table-view.html'
 		.when '/graph', 
 			templateUrl:'partials/graph-view.html'
+			controller:'GraphController',
+			controllerAs:'graphCtrl'
 ])
 
