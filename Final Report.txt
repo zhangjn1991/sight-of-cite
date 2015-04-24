@@ -47,6 +47,34 @@ Filter nodes using the search section on the left to avoid cluster.
 
 
 PART VII Technical Challenge
+During the development of our project, we met several issues. One that would be meaningful for discussion here is about the format of query output. In a typical article search, the system will return a set of information of each paper, including a series of authors. There is an ugly way to deal with it--simply print out multiple tuples of a single paper. But to achieve more versatility and in pursuit of beauty, we must split it up into independent components and feed into a single tuple.
+We were considering aggregate functions in the first place, but since there are other sub-functions of that query API, we had to find another way out. After some search, we found the "GROUP_CONCAT" function, which is capable of aggregate all the authors into an array separated by an assigned mark. By implementing the following SQL sentence,
+$sql = ("SELECT Publication.pub_id AS pub_id, 
+				Publication.pub_title AS title, 
+				Publication.pub_year AS pub_year,
+				Publication.pub_ISBN AS ISBN,
+				Publication.pub_abstract AS abstract,
+				GROUP_CONCAT( DISTINCT Author.auth_name SEPARATOR ',' ) AS authorNames, 
+				GROUP_CONCAT( DISTINCT Author.auth_id SEPARATOR ',' ) AS authorIds, 
+				GROUP_CONCAT( DISTINCT Cite.citer_id SEPARATOR ',' ) AS citerIds, 
+				GROUP_CONCAT( DISTINCT Cite.citee_id SEPARATOR ',' ) AS citeeIds
+				FROM Author 
+					NATURAL JOIN Author_of 
+					NATURAL JOIN Publication 
+					JOIN Cite ON Publication.pub_id = Cite.citee_id OR Publication.pub_id = Cite.citer_id 
+					LEFT OUTER JOIN Tag_of ON Tag_of.pub_id = Publication.pub_id 
+                    LEFT OUTER JOIN Tag ON Tag.tag_id = Tag_of.tag_id ");
+and further formating that by the PHP code:
+$result[$resultCount]->authorNames = explode(',', $result[$resultCount]->authorNames);
+			$result[$resultCount]->authorIds = explode(',', $result[$resultCount]->authorIds);
+
+			for ($i = 0; $i < sizeof($result[$resultCount]->authorNames); $i++) {
+				$authorObj = new stdClass;
+				$authorObj->name = $result[$resultCount]->authorNames[$i];
+				$authorObj->id = $result[$resultCount]->authorIds[$i];
+				$result[$resultCount]->author[$i] = $authorObj;
+			}
+We've re-format the authors into an object, which is convenient for the front-end's purpose.
 
 PART VIII Deviation from the Initial Plan
 After a semester-long continuous development, we as a team tackled down various technical difficulties, and gained so much from it. Most of the original plan has been realized as a product. While there is one thing limits us advance a step forward, that is the data. It is hardly imaginable how difficult it is to acquire accurate academic dataset, especially for those aged files, like an article in the 1980s. It took us quite some time try to find the truth out of numerous incorrect and duplicated information, but still, the final dataset contains a certain level of error.

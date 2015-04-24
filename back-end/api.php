@@ -40,6 +40,9 @@ if ($_SERVER ['REQUEST_METHOD'] == 'GET') {		// QUERY
 			case "get_paper_by_ids": 	// API 09
 				$value = getPaperByPubIds( $_GET["ids"] );
 				break;
+			case "get_cite":	// API 14
+				$value = getCite();
+				break;
 			default :
 				$value = 'Error input.';
 		endswitch;
@@ -471,6 +474,23 @@ function getPaperByPubId( $pub_id ) {
 			$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
 		// set the PDO error mode to exception
 			$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+			// $sql = ("SELECT Publication.pub_id AS pub_id, 
+			// 	Publication.pub_title AS title, 
+			// 	Publication.pub_year AS pub_year,
+			// 	Publication.pub_ISBN AS ISBN,
+			// 	Publication.pub_abstract AS abstract,
+			// 	GROUP_CONCAT( DISTINCT Author.auth_name SEPARATOR ',' ) AS authorNames, 
+			// 	GROUP_CONCAT( DISTINCT Author.auth_id SEPARATOR ',' ) AS authorIds, 
+			// 	GROUP_CONCAT( DISTINCT Cite.citer_id SEPARATOR ',' ) AS citerIds, 
+			// 	GROUP_CONCAT( DISTINCT Cite.citee_id SEPARATOR ',' ) AS citeeIds,
+			// 	Location.loc_name AS location
+			// 	FROM Author 
+			// 		NATURAL JOIN Author_of 
+			// 		NATURAL JOIN Publication 
+			// 		NATURAL JOIN Location 
+			// 		NATURAL JOIN Tag_of
+			// 		NATURAL JOIN Tag
+			// 		NATURAL JOIN Cite");
 			$sql = ("SELECT Publication.pub_id AS pub_id, 
 				Publication.pub_title AS title, 
 				Publication.pub_year AS pub_year,
@@ -479,17 +499,15 @@ function getPaperByPubId( $pub_id ) {
 				GROUP_CONCAT( DISTINCT Author.auth_name SEPARATOR ',' ) AS authorNames, 
 				GROUP_CONCAT( DISTINCT Author.auth_id SEPARATOR ',' ) AS authorIds, 
 				GROUP_CONCAT( DISTINCT Cite.citer_id SEPARATOR ',' ) AS citerIds, 
-				GROUP_CONCAT( DISTINCT Cite.citee_id SEPARATOR ',' ) AS citeeIds,
-				Location.loc_name AS location
+				GROUP_CONCAT( DISTINCT Cite.citee_id SEPARATOR ',' ) AS citeeIds
 				FROM Author 
 					NATURAL JOIN Author_of 
 					NATURAL JOIN Publication 
-					NATURAL JOIN Location 
-					NATURAL JOIN Tag_of
-					NATURAL JOIN Tag
-					NATURAL JOIN Cite");
+					JOIN Cite ON Publication.pub_id = Cite.citee_id OR Publication.pub_id = Cite.citer_id 
+					LEFT OUTER JOIN Tag_of ON Tag_of.pub_id = Publication.pub_id 
+                    LEFT OUTER JOIN Tag ON Tag.tag_id = Tag_of.tag_id ");
 
-		if ( $pub_id == "getAll") {	// SPECIAL CASE: get all paper
+		if ( $pub_id == "getAll" ) {	// SPECIAL CASE: get all paper
 			$sql = $sql." GROUP BY Publication.pub_id";
 		} else {
 			$sql = $sql." WHERE Publication.pub_id = :pub_id";
@@ -523,7 +541,8 @@ function getPaperByPubId( $pub_id ) {
 			$result[$resultCount]->citeeIds = explode(',', $result[$resultCount]->citeeIds);
 			for ($i = 0; $i < sizeof($result[$resultCount]->citeeIds); $i++) {
 				$citeePaperObj = new stdClass;
-				$citeePaperObj = getCiteeInfo( $result[$resultCount]->citeeIdse[$i], $pub_id );
+				// print_r($result[$resultCount]->citeeIds);
+				$citeePaperObj = getCiteeInfo( $result[$resultCount]->citeeIds[$i], $pub_id );
 				$result[$resultCount]->references[$i] = $citeePaperObj;
 			}
 
@@ -684,6 +703,32 @@ function addCitationByPaperIds( $citerId, $citeeId ) {
 	$conn = null;
 }
 
+// API 14
+function getCite() {
+	global $SERVERNAME, $PORT, $DBNAME, $USERNAME, $PASSWORD;
+		
+	try {
+		$conn = new PDO ( "mysql:host=$SERVERNAME;port=$PORT; dbname=$DBNAME", $USERNAME, $PASSWORD);
+		// set the PDO error mode to exception
+		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+		$noteId = checkCite( $citerId, $citeeId );
+
+		$sql = ("SELECT * FROM Cite");
+
+		$stmt = $conn->prepare( $sql );
+		$stmt->execute();
+		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
+
+		return $result;
+
+	} catch ( PDOException $e ) {
+		echo $e->getMessage ();
+	}
+
+	$conn = null;
+}
+
 ////////////////////////////////
 //   Peripheral Functions    //
 //////////////////////////////
@@ -717,15 +762,18 @@ function getCiterInfo( $citerId, $citeeId ) {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		$noteId = checkCite( $citerId, $citeeId );
+		// $noteId = checkCite( $citerId, $citeeId );
 
-		$sql = ("SELECT Publication.pub_id, Publication.pub_title, Note.note_content, Note.note_rating, Note.note_date
-				FROM Publication, Note
-				WHERE Publication.pub_id = :citer_id AND Note.note_id = :note_id");
+		// $sql = ("SELECT Publication.pub_id, Publication.pub_title, Note.note_content, Note.note_rating, Note.note_date
+		// 		FROM Publication, Note
+		// 		WHERE Publication.pub_id = :citer_id AND Note.note_id = :note_id");
+		$sql = ("SELECT Publication.pub_id, Publication.pub_title
+				FROM Publication
+				WHERE Publication.pub_id = :citer_id ");
 
 		$stmt = $conn->prepare( $sql );
 		$stmt->bindParam(":citer_id", $citerId, PDO::PARAM_INT);
-		$stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
+		// $stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
 		$stmt->execute();
 		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
 
@@ -746,15 +794,19 @@ function getCiteeInfo( $citeeId, $citerId ) {
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		$noteId = checkCite( $citerId, $citeeId );
+		// $noteId = checkCite( $citerId, $citeeId );
 
-		$sql = ("SELECT Publication.pub_id, Publication.pub_title, Note.note_content, Note.note_rating, Note.note_date
-				FROM Publication, Note
-				WHERE Publication.pub_id = :citer_id AND Note.note_id = :note_id");
+		// $sql = ("SELECT Publication.pub_id, Publication.pub_title, Note.note_content, Note.note_rating, Note.note_date
+		// 		FROM Publication, Note
+		// 		WHERE Publication.pub_id = :citer_id AND Note.note_id = :note_id");
+
+		$sql = ("SELECT Publication.pub_id, Publication.pub_title
+				FROM Publication
+				WHERE Publication.pub_id = :citee_id");
 
 		$stmt = $conn->prepare( $sql );
-		$stmt->bindParam(":citer_id", $citerId, PDO::PARAM_INT);
-		$stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
+		$stmt->bindParam(":citee_id", $citeeId, PDO::PARAM_INT);
+		// $stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
 		$stmt->execute();
 		$result = $stmt->fetchAll ( PDO::FETCH_CLASS );
 
@@ -962,7 +1014,7 @@ function checkTag( $tagContent ) {		// Check the passed STRING tag_content, if n
 		// set the PDO error mode to exception
 		$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		$sql = ("SELECT tag_if FROM Tag WHERE tag_content = :tag_content");
+		$sql = ("SELECT tag_id FROM Tag WHERE tag_content = :tag_content");
 
 		$stmt = $conn->prepare( $sql );
 		$stmt->bindParam(":tag_content", $tagContent, PDO::PARAM_STR);
