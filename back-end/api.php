@@ -516,7 +516,7 @@ function getPaperByPubId( $pub_id ) {
 
 		// re-formating the result into associative array
 		for ($resultCount = 0; $resultCount < sizeof($result); $resultCount++) {
-			
+
 			$result[$resultCount]->authorNames = explode(',', $result[$resultCount]->authorNames);
 			$result[$resultCount]->authorIds = explode(',', $result[$resultCount]->authorIds);
 
@@ -530,15 +530,14 @@ function getPaperByPubId( $pub_id ) {
 			$result[$resultCount]->citerIds = explode(',', $result[$resultCount]->citerIds);
 			for ($i = 0; $i < sizeof($result[$resultCount]->citerIds); $i++) {
 				$citerPaperObj = new stdClass;
-				$citerPaperObj = getCiterInfo( $result[$resultCount]->citerIds[$i], $pub_id );
+				$citerPaperObj = getCiterInfo( $result[$resultCount]->citerIds[$i], $result[$resultCount]->pub_id );
 				$result[$resultCount]->citedbys[$i] = $citerPaperObj;
 			}
 
 			$result[$resultCount]->citeeIds = explode(',', $result[$resultCount]->citeeIds);
 			for ($i = 0; $i < sizeof($result[$resultCount]->citeeIds); $i++) {
 				$citeePaperObj = new stdClass;
-				// print_r($result[$resultCount]->citeeIds);
-				$citeePaperObj = getCiteeInfo( $result[$resultCount]->citeeIds[$i], $pub_id );
+				$citeePaperObj = getCiteeInfo( $result[$resultCount]->citeeIds[$i], $result[$resultCount]->pub_id );
 				$result[$resultCount]->references[$i] = $citeePaperObj;
 			}
 
@@ -806,7 +805,7 @@ function getCiteeInfo( $citeeId, $citerId ) {
 		} else {
 			$sql = ("SELECT Publication.pub_id, Publication.pub_title, Note.note_content, Note.note_rating, Note.note_date
 					FROM Publication, Note
-					WHERE Publication.pub_id = :citer_id AND Note.note_id = :note_id");
+					WHERE Publication.pub_id = :citee_id AND Note.note_id = :note_id");
 			$stmt = $conn->prepare( $sql );
 			$stmt->bindParam(":note_id", $noteId, PDO::PARAM_INT);
 		}
