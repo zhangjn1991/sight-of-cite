@@ -55,6 +55,8 @@ body {
     background-image: url("../resources/tick-icon.png"); }
   .button.hide > div {
     background-image: url("../resources/hide-icon.png"); }
+  .button.switch > div {
+    background-image: url("../resources/switch-icon.png"); }
 
 header {
   position: absolute;
@@ -161,11 +163,11 @@ header {
       color: rgba(96, 123, 141, 0.5); }
     .info-bar .content-container p {
       margin: 0.5em; }
-      .info-bar .content-container p span::after {
+      .info-bar .content-container p span.author::after {
         content: ', '; }
-      .info-bar .content-container p span:last-of-type::after {
+      .info-bar .content-container p span.author:last-of-type::after {
         content: none; }
-      .info-bar .content-container p span.author {
+      .info-bar .content-container p span.author.author {
         text-transform: capitalize; }
       .info-bar .content-container p a {
         color: inherit;

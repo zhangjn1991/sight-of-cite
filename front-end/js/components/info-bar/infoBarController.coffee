@@ -23,6 +23,8 @@ angular.module 'sightApp'
 	@saveEdit = ()->
 		isNewPaper = @isNewEntity(@entity) #if the entity was empty before editing, this is a newly add paper. 
 
+		tagsToAdd = _.difference(@tempEntityDetail.tags,@entity.tags)
+
 		@overwriteObject @tempEntityDetail, @entity;
 		#must use overwrite, so don't loose reference in the table.
 		
@@ -36,13 +38,17 @@ angular.module 'sightApp'
 			if isNewPaper then self.entity.pub_id = res.pub_id
 		, 'json');
 
+		_.each tagsToAdd,(d)->
+			$.post($scope.globalCtrl.getServerAddr(),{action:'add_tag_by_paper_id',data:{pub_id:self.entity.pub_id,tag_content:d}})
+		
+
 	@cancelEdit = ()->
 		@tempEntityDetail = null;
 		@isEditing = false;
 
 	@setCurrentEntity = (entity)->
 		@entity = entity;
-
+		@entity.tags = _.filter(@entity.tags,(d)->d.length>0)
 		if @isNewEntity(entity)
 		 	@startEdit()
 		else
@@ -83,7 +89,7 @@ angular.module 'sightApp'
 			rating:@citationEntity.note_rating
 			date:null
 		}
-		$.post($scope.globalCtrl.getServerAddr(),{action:'update_note_by_paper_ids',data:data},(res)->console.log res)
+		$.post($scope.globalCtrl.getServerAddr(),{action:'add_note_by_paper_ids',data:data},(res)->console.log res)
 
 	@isInvalidCitation = (citation)->
 		return citation.pub_id == @entity.pub_id

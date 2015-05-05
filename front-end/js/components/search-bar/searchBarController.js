@@ -32,7 +32,7 @@ angular.module('sightApp').controller('SearchBarController', function($scope, $h
       attr: 'cite_count'
     }, {
       name: 'Tag',
-      attr: 'tag'
+      attr: 'tags'
     }, {
       name: 'Location',
       attr: 'location'
@@ -62,6 +62,9 @@ angular.module('sightApp').controller('SearchBarController', function($scope, $h
     if (metric_attr === 'author') {
       data_value = _.pluck(data_value, 'name').join(',');
     }
+    if (metric_attr === 'tags') {
+      data_value = data_value.join(' ');
+    }
     switch (this.allMeasures[condition.measure_id]) {
       case '=':
         return data_value === value;
@@ -83,6 +86,10 @@ angular.module('sightApp').controller('SearchBarController', function($scope, $h
       });
     });
     return $scope.globalCtrl.tableViewCtrl.setData(res);
+  };
+  this.clearSearch = function() {
+    this.allConditions = [];
+    return this.search();
   };
   return 0;
 });

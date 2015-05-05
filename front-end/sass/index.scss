@@ -124,7 +124,7 @@ body{
 	}
 
 
-	$icon-list: 'add','add-dark','edit','cross','trash','tick','hide';
+	$icon-list: 'add','add-dark','edit','cross','trash','tick','hide','switch';
 
 	@each $icon in $icon-list{
 		&.#{$icon} > div{
@@ -192,7 +192,7 @@ header{
 		z-index:$z-header;
 		.button{
 			height:100%;			
-			width:2em;
+			width:2em;			
 			margin-left:1em;
 		}
 	}
@@ -299,7 +299,7 @@ header{
 
 		p{
 			margin:0.5em;
-			span{
+			span.author{
 				&::after{
 					content:', ';
 				}

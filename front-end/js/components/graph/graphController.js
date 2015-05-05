@@ -19,18 +19,18 @@ angular.module('sightApp').controller('GraphController', function($scope, $http)
   all_nodes = [];
   $scope.node_data = [];
   $scope.cite_data = [];
-  d3.json('http://127.0.0.1:8888/sight-of-cite/back-end/api.php?action=get_cite', function(json) {
+  d3.json($scope.globalCtrl.getServerAddr() + '?action=get_cite', function(json) {
+    var initial_id;
     $scope.cite_data = json;
-    return $http.get('http://127.0.0.1:8888/sight-of-cite/back-end/api.php?action=get_all_paper').success(function(json) {
-      var initial_id;
-      $scope.node_data = json;
+    if (($scope.globalCtrl.tableViewCtrl != null) && ($scope.globalCtrl.tableViewCtrl.allData != null)) {
+      $scope.node_data = $scope.globalCtrl.tableViewCtrl.allData;
       initial_id = $scope.globalCtrl.initialGraphPaperId;
       if ((initial_id != null)) {
         return addPaperById(initial_id);
       } else {
         return addPaperById("103");
       }
-    });
+    }
   });
   tickEventHandler = function() {
     d3.selectAll('.link').attr('x1', function(d) {
@@ -46,7 +46,7 @@ angular.module('sightApp').controller('GraphController', function($scope, $http)
       return "translate(" + d.x + "," + d.y + ")";
     });
   };
-  force = d3.layout.force().charge(-2000).linkDistance(100).linkStrength(0.2).size([svgWidth, svgHeight]).on('tick', tickEventHandler);
+  force = d3.layout.force().charge(-1000).linkStrength(0.2).size([svgWidth, svgHeight]).on('tick', tickEventHandler);
   updateGraph = function() {
     var links, nodes;
     force.nodes(all_nodes).links(all_links).start();

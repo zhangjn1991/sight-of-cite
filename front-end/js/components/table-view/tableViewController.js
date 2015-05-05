@@ -38,38 +38,38 @@ angular.module("sightApp").controller("TableViewController", function($scope, $h
     enableSorting: true,
     columnDefs: [
       {
-        field: 'pub_id',
-        width: '2%',
-        minWidth: 100
-      }, {
         field: 'title',
-        width: '30%'
+        width: '40%'
       }, {
         name: 'Authors',
         field: 'author',
         width: '20%',
         cellFilter: 'authorCellFilter'
       }, {
-        name: 'year',
-        field: 'pub_year',
-        width: '10%'
-      }, {
         name: 'Citation Count',
         field: 'cite_count',
-        width: '10%'
-      }, {
-        name: "ISBN",
-        field: 'ISBN',
         width: '10%'
       }, {
         name: 'location',
         field: 'location',
         width: '20%'
+      }, {
+        name: "ISBN",
+        field: 'ISBN',
+        width: '10%'
+      }, {
+        field: 'pub_id',
+        width: '2%',
+        minWidth: 80
       }
     ],
     rowTemplate: '<div ng-class="{active: grid.appScope.tableViewCtrl.activeRowEntity == row.entity}" ng-click="grid.appScope.tableViewCtrl.setActiveRow(row.entity)" ng-repeat="col in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ui-grid-cell></div>'
   };
   this.setData = function(data) {
+    data = _.map(data, function(d) {
+      d.cite_count = parseInt(d.cite_count);
+      return d;
+    });
     return this.gridOptions.data = data;
   };
   $http.get($scope.globalCtrl.getServerAddr() + '?action=get_all_paper').success(function(data) {

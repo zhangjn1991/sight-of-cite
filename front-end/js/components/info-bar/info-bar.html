@@ -11,13 +11,13 @@
 			<section>
 				<h2>Authors</h2>
 				<p>
-					<span class="author" ng-repeat="author in infoBarCtrl.entity.author"><a href="">{{author.name}}</a></span>
+					<span class="author" ng-repeat="author in infoBarCtrl.entity.author"><a href="http://academic.research.microsoft.com/author/{{author.MSid}}">{{author.name}}</a></span>
 				</p>
 			</section>
-			<section>
+			<!-- <section>
 				<h2>Year</h2>
 				<p>{{infoBarCtrl.entity.pub_year}}</p>
-			</section>
+			</section> -->
 			<section>
 				<h2>Citation Count</h2>
 				<p>{{infoBarCtrl.entity.cite_count}}</p>
@@ -33,11 +33,7 @@
 			<section>
 				<h2>Tags</h2>
 				<tag-container entity="infoBarCtrl.entity"></tag-container>
-			</section>
-			<section>
-				<h2>Abstract</h2>
-				<p>{{infoBarCtrl.entity.abstract}}</p>
-			</section>
+			</section>			
 		</div>
 		<div class="edit-container" ng-show="infoBarCtrl.isEditing">
 			<div class="button-container">
@@ -56,10 +52,10 @@
 				<h2>Authors</h2>
 				<textarea name="author" id="author" ng-model="infoBarCtrl.tempEntityDetail.author" placeholder="Author Names" author-input-formatter></textarea>
 			</section>
-			<section>
+			<!-- <section>
 				<h2>Year</h2>
 				<textarea name="year" id="year" ng-model="infoBarCtrl.tempEntityDetail.pub_year" placeholder="Publication Year"></textarea>
-			</section>
+			</section> -->
 			<section>
 				<h2>Cite Count</h2>
 				<textarea name="cite-count" id="cite-count" ng-model="infoBarCtrl.tempEntityDetail.cite_count" placeholder="Citation Count"></textarea>
@@ -70,11 +66,11 @@
 			</section>
 			<section>
 				<h2>Conference</h2>
-				<textarea name="conference" id="conference" ng-model="infoBarCtrl.tempEntityDetail.conference" placeholder="Conference Title"></textarea>
+				<textarea name="conference" id="conference" ng-model="infoBarCtrl.tempEntityDetail.location" placeholder="Conference Title"></textarea>
 			</section>
 			<section>
 				<h2>Tags</h2>
-				<textarea name="tags" id="tags" placeholder="Put tags here, separate with comma" ng-model="infoBarCtrl.tempEntityDetail.tag" tag-input-formatter></textarea>
+				<textarea name="tags" id="tags" placeholder="Put tags here, separate with comma" ng-model="infoBarCtrl.tempEntityDetail.tags" tag-input-formatter></textarea>
 			</section>
 			<section>
 				<h2>Abstract</h2>
@@ -83,13 +79,17 @@
 		</div>
 	</div>
 	<div class="content-container note-container" ng-show="globalCtrl.tabIndex == 1">
-		<h1>Tags</h1>
+		<!-- <h1>Tags</h1>
 		<section>
 			<tag-container entity="infoBarCtrl.entity"></tag-container>
 		</section>
 		<h1>Comments</h1>
 		<section>
 			<textarea name="" id="">{{infoBarCtrl.entity.comment}}</textarea>
+		</section> -->
+		<section>
+				<!-- <h2>Abstract</h2> -->
+			<p>{{infoBarCtrl.entity.abstract}}</p>
 		</section>
 	</div>
 	<div class="content-container citation-container" ng-show="globalCtrl.tabIndex == 2 || globalCtrl.tabIndex == 3">
@@ -107,16 +107,16 @@
 						<div class="title">Title</div>
 					</div> -->
 					<div class="cite-row" ng-class="{'active':citation == infoBarCtrl.citationEntity}" ng-repeat="citation in infoBarCtrl.currentCitationList" ng-click="infoBarCtrl.setCitationEntity(citation)" ng-hide="infoBarCtrl.isInvalidCitation(citation)">
-						<div class="rating">{{citation.pub_id}}</div>
+						<div class="rating">{{citation.note_rating}}</div>
 						<div class="title">{{citation.pub_title}}</div>
 					</div>					
 				</div>
 			</div>
 		</section>
-		<section>
+		<!-- <section>
 			<h2>Date</h2>
 			<p>{{inforBarCtrl.citationEntity.note_date}}</p>
-		</section>
+		</section> -->
 		<section>
 			<h2>Rating</h2>
 			<textarea id="cite_rating" placeholder="Rate from 1 to 5" ng-model="infoBarCtrl.citationEntity.note_rating"></textarea>

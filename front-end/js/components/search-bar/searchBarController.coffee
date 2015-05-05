@@ -24,7 +24,7 @@ angular.module 'sightApp'
 		{name:'Title',attr:'title'},
 		{name:'Author',attr:'author'},
 		{name:'Citation',attr:'cite_count'},
-		{name:'Tag',attr:'tag'},
+		{name:'Tag',attr:'tags'},
 		{name:'Location',attr:'location'}
 	]
 	@allMeasures = ['Relation','>','<','Has','=']
@@ -62,6 +62,9 @@ angular.module 'sightApp'
 
 		if metric_attr == 'author'
 			data_value = _.pluck(data_value,'name').join(',')
+
+		if metric_attr == 'tags'
+			data_value = data_value.join ' '
 		
 		switch @allMeasures[condition.measure_id]
 			when '=' then return data_value == value
@@ -76,6 +79,8 @@ angular.module 'sightApp'
 			res = _.filter res,(d)->self.isConditionTrue(d,condition)
 		)
 		$scope.globalCtrl.tableViewCtrl.setData(res)
-
+	@clearSearch = ()->
+		@allConditions = []
+		@search()
 
 	0

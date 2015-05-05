@@ -16,13 +16,14 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
     return this.isEditing = true;
   };
   this.saveEdit = function() {
-    var actionName, isNewPaper;
+    var actionName, isNewPaper, tagsToAdd;
     isNewPaper = this.isNewEntity(this.entity);
+    tagsToAdd = _.difference(this.tempEntityDetail.tags, this.entity.tags);
     this.overwriteObject(this.tempEntityDetail, this.entity);
     this.isEditing = false;
     actionName = isNewPaper ? "add_paper" : "update_paper";
     console.log("AJAX: " + actionName);
-    return $.post($scope.globalCtrl.getServerAddr(), {
+    $.post($scope.globalCtrl.getServerAddr(), {
       action: actionName,
       data: this.entity
     }, function(res) {
@@ -31,6 +32,15 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
         return self.entity.pub_id = res.pub_id;
       }
     }, 'json');
+    return _.each(tagsToAdd, function(d) {
+      return $.post($scope.globalCtrl.getServerAddr(), {
+        action: 'add_tag_by_paper_id',
+        data: {
+          pub_id: self.entity.pub_id,
+          tag_content: d
+        }
+      });
+    });
   };
   this.cancelEdit = function() {
     this.tempEntityDetail = null;
@@ -38,6 +48,9 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
   };
   this.setCurrentEntity = function(entity) {
     this.entity = entity;
+    this.entity.tags = _.filter(this.entity.tags, function(d) {
+      return d.length > 0;
+    });
     if (this.isNewEntity(entity)) {
       return this.startEdit();
     } else {
@@ -85,7 +98,7 @@ angular.module('sightApp').controller("InfoBarController", function($scope) {
       date: null
     };
     return $.post($scope.globalCtrl.getServerAddr(), {
-      action: 'update_note_by_paper_ids',
+      action: 'add_note_by_paper_ids',
       data: data
     }, function(res) {
       return console.log(res);

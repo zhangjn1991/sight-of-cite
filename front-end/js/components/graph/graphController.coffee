@@ -22,15 +22,27 @@ angular.module 'sightApp'
 	$scope.node_data = []
 	$scope.cite_data = []
 
-	d3.json 'http://127.0.0.1:8888/sight-of-cite/back-end/api.php?action=get_cite',(json)->
-		$scope.cite_data=json
-		$http.get('http://127.0.0.1:8888/sight-of-cite/back-end/api.php?action=get_all_paper').success (json)->
-				$scope.node_data=json
-				initial_id = $scope.globalCtrl.initialGraphPaperId
-				if(initial_id?)
-					addPaperById(initial_id)
-				else
-					addPaperById("103")
+	# d3.json $scope.globalCtrl.getServerAddr()+'?action=get_cite',(json)->
+	# 	$scope.cite_data=json		
+	# 	$http.get($scope.globalCtrl.getServerAddr()+'?action=get_all_paper').success (json)->
+	# 			$scope.node_data=json
+	# 			initial_id = $scope.globalCtrl.initialGraphPaperId
+	# 			if(initial_id?)
+	# 				addPaperById(initial_id)
+	# 			else
+	# 				addPaperById("103")
+
+	d3.json $scope.globalCtrl.getServerAddr()+'?action=get_cite',(json)->
+		$scope.cite_data=json		
+		if($scope.globalCtrl.tableViewCtrl? and $scope.globalCtrl.tableViewCtrl.allData?)
+			$scope.node_data=$scope.globalCtrl.tableViewCtrl.allData
+			initial_id = $scope.globalCtrl.initialGraphPaperId
+			if(initial_id?)
+				addPaperById(initial_id)
+			else
+				addPaperById("103")
+
+	
 	  
 
 
@@ -44,8 +56,8 @@ angular.module 'sightApp'
 			.attr 'transform', (d)->"translate(#{d.x},#{d.y})";			
 
 	force = d3.layout.force()
-		.charge(-2000)
-		.linkDistance(100)
+		.charge(-1000)
+		# .linkDistance(100)
 		.linkStrength(0.2)
 		.size([svgWidth,svgHeight])
 		.on 'tick',tickEventHandler
